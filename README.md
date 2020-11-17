@@ -1,5 +1,6 @@
 ### Hi there 👋
 
+My name is _Dylan Patch_ and I like Pizza
 <!--
 **thatpatchguy/thatpatchguy** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
