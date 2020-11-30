@@ -1,0 +1,74 @@
+.viz_options {
+    background: darkblue;
+    color: black;
+}
+
+.viz {
+    background-color: rgb(50,50,50);
+    color: black;
+}
+
+.viz_options a {
+    color: black;
+}
+
+p {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+h1 {
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+.jumbotron li {
+    margin-left: 40%;
+    margin-right: 40%;
+    text-align: left;
+}
+
+img {
+    width: 65ex;
+    height: 50ex;
+    border-radius: 5px;
+    margin-top: 5ex;
+}
+.box {
+    background-color: darkblue;
+    height: 50%;
+    /* padding: 5px; */
+}
+
+.thumbnail {
+    height: 50ex;
+    max-height: 50ex;
+    margin: 10px;
+    background-color: darkblue;
+}
+
+button a {
+    color: black;
+}
+
+.table-responsive {
+    max-height: 800px;
+}
+
+.boxen {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+.big_button {
+    border-radius: 5px;
+    width: 50%;
+    height: 50px;
+    background-color: rgb(50,50,50);
+}
+
+.big_button a {
+    color: white;
+}

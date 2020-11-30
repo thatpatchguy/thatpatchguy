@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Data</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <nav class="navbar navbar-inverse">
+        <div>
+            <div class="navbar-header">
+              <a class="navbar-brand" href="#">Air Quality</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="comparisons.html">Comparisons</a></li>
+                <li><a href="data.html">Data</a></li>
+                <li class="viz"><a>Visualizations</a></li>
+                <li class="viz_options"><a href="aq.html">Air Quality</a></li>
+                <li class="viz_options"><a href="subsidies.html">Subsidies</a></li>
+                <li class="viz_options"><a href="transportation.html">Transportation Infrastructure</a></li>
+                <li class="viz_options"><a href="overall.html">Overall Findings</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="jumbotron text-center">
+        <h1>Data Sets</h1>
+    </div>
+    <div  class="jumbotron text-center">
+        <h2>Air Quality Data</h2>
+        <p>For our Air Quality data we used an incredibly large dataset of data scraped from the U.S. EPA website which
+            was hosted at <a href="https://www.kaggle.com/sogun3/uspollution">Kaggle</a>. With that raw data we were able to find the mean levels
+            of different chemical compounds by state by year. While this still left us with a large data set we were able to 
+            use plotting to make sense of the data.</p>
+            <h3>Here is the data after it was cleaned from >50000 rows:</h3>
+            <div class="table-responsive">
+                <table border="1" class="table">
+                    <thead>
+                      <tr style="text-align: right;">
+                        <th></th>
+                        <th>State</th>
+                        <th>Year</th>
+                        <th>NO2 Mean</th>
+                        <th>O3 Mean</th>
+                        <th>SO2 Mean</th>
+                        <th>CO Mean</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th>2</th>
+                        <td>Alabama</td>
+                        <td>2013</td>
+                        <td>12.065634967741929</td>
+                        <td>0.012098838709677423</td>
+                        <td>0.750311306451613</td>
+                        <td>0.2110068870967743</td>
+                      </tr>
+                      <tr>
+                        <th>3</th>
+                        <td>Alabama</td>
+                        <td>2014</td>
+                        <td>9.411745809286877</td>
+                        <td>0.02466014925373136</td>
+                        <td>1.1865171293532364</td>
+                        <td>0.20592147014925288</td>
+                      </tr>
+                      <tr>
+                        <th>4</th>
+                        <td>Alabama</td>
+                        <td>2015</td>
+                        <td>9.07858020666667</td>
+                        <td>0.023999966666666726</td>
+                        <td>1.0094290199999982</td>
+                        <td>0.2210266799999999</td>
+                      </tr>
+                      <tr>
+                        <th>5</th>
+                        <td>Alabama</td>
+                        <td>2016</td>
+                        <td>9.524873194630876</td>
+                        <td>0.02834774496644293</td>
+                        <td>0.8351175503355704</td>
+                        <td>0.20951413758389284</td>
+                      </tr>
+                      <tr>
+                        <th>6</th>
+                        <td>Alaska</td>
+                        <td>2014</td>
+                        <td>11.658509608938544</td>
+                        <td>0.010306575418994405</td>
+                        <td>5.951531268156425</td>
+                        <td>0.4554438687150833</td>
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+    </div>
+    <div  class="jumbotron text-center">
+        <h2>Subsidies Data</h2>
+        <p>For the subsidies data we also took a rather large data set from a scientific article on 
+            <a href="https://www.sciencedirect.com/science/article/pii/S2352340919300071?via%3Dihub">ScienceDirect</a>
+            This article also took a decent amount of cleaning to get it into a form we can compare with the air quality 
+            so we needed it by state and by year.
+        </p>
+        <h3>Here is an example of 5 of the 19200 rows of raw data:</h3>
+            <div class="table-responsive">
+            <table border="1" class="table">
+                <thead>
+                  <tr style="text-align: right;">
+                    <th></th>
+                    <th>state</th>
+                    <th>statecode</th>
+                    <th>year</th>
+                    <th>time</th>
+                    <th>makemodel</th>
+                    <th>evtype</th>
+                    <th>vehiclepurchaseincentive_dummy</th>
+                    <th>vehiclepurchaseincentive_amount</th>
+                    <th>homechargersubsidy_dummy</th>
+                    <th>homechargersubsidy_amount</th>
+                    <th>reducedvltregfee_dummy</th>
+                    <th>vltregfee_amount</th>
+                    <th>vltregfee_pvamount</th>
+                    <th>hovaccess_dummy</th>
+                    <th>hovaccess_amount</th>
+                    <th>hovacess_pvamount</th>
+                    <th>emissionexemption_dummy</th>
+                    <th>emissionsexemption_amount</th>
+                    <th>emissionsexemption_pvamount</th>
+                    <th>annualfee_dummy</th>
+                    <th>annualfee_amount</th>
+                    <th>annualfee_pvamount</th>
+                    <th>tou_dummy</th>
+                    <th>designatedparking_dummy</th>
+                    <th>freeparking_dummy</th>
+                    <th>Subsidies_excludinghov</th>
+                    <th>Index_includinghov</th>
+                    <th>Subsidies</th>
+                    <th>Index</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>1920</th>
+                    <td>Colorado</td>
+                    <td>CO</td>
+                    <td>2010</td>
+                    <td>2010h1</td>
+                    <td>Bmw Active E</td>
+                    <td>bev</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>1</td>
+                    <td>200</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                  </tr>
+                  <tr>
+                    <th>1921</th>
+                    <td>Colorado</td>
+                    <td>CO</td>
+                    <td>2010</td>
+                    <td>2010h1</td>
+                    <td>Bmw I3</td>
+                    <td>bev</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>1</td>
+                    <td>200</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                  </tr>
+                  <tr>
+                    <th>1922</th>
+                    <td>Colorado</td>
+                    <td>CO</td>
+                    <td>2010</td>
+                    <td>2010h1</td>
+                    <td>Bmw I3REx</td>
+                    <td>phev</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>1</td>
+                    <td>200</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                  </tr>
+                  <tr>
+                    <th>1923</th>
+                    <td>Colorado</td>
+                    <td>CO</td>
+                    <td>2010</td>
+                    <td>2010h1</td>
+                    <td>Bmw I8</td>
+                    <td>phev</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>1</td>
+                    <td>200</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                  </tr>
+                  <tr>
+                    <th>1924</th>
+                    <td>Colorado</td>
+                    <td>CO</td>
+                    <td>2010</td>
+                    <td>2010h1</td>
+                    <td>Bmw X5</td>
+                    <td>phev</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>1</td>
+                    <td>200</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0.0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                    <td>200.0</td>
+                    <td>0</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <h3>Here is the dataset after cleaning:</h3>
+            <div class="table-responsive">
+            <table border="1" class="table">
+                <thead>
+                  <tr style="text-align: right;">
+                    <th></th>
+                    <th>subsidies</th>
+                    <th>year</th>
+                    <th>state</th>
+                    <th>subsidies excluding hov</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>0</th>
+                    <td>5359.634</td>
+                    <td>2010</td>
+                    <td>California</td>
+                    <td>2062.5</td>
+                  </tr>
+                  <tr>
+                    <th>0</th>
+                    <td>5310.283</td>
+                    <td>2011</td>
+                    <td>California</td>
+                    <td>2062.5</td>
+                  </tr>
+                  <tr>
+                    <th>0</th>
+                    <td>5304.900</td>
+                    <td>2012</td>
+                    <td>California</td>
+                    <td>2062.5</td>
+                  </tr>
+                  <tr>
+                    <th>0</th>
+                    <td>5303.941</td>
+                    <td>2013</td>
+                    <td>California</td>
+                    <td>2062.5</td>
+                  </tr>
+                  <tr>
+                    <th>0</th>
+                    <td>5287.633</td>
+                    <td>2014</td>
+                    <td>California</td>
+                    <td>2062.5</td>
+                  </tr>
+                  <tr>
+                    <th>0</th>
+                    <td>5344.072</td>
+                    <td>2015</td>
+                    <td>California</td>
+                    <td>2062.5</td>
+                  </tr>
+                </tbody>
+              </table>
+              </div>
+    </div>
+    <div  class="jumbotron text-center">
+        <h2>Transportation Data</h2>
+        <p>We were able to find data based on rankings of public transportation infrastructure on 
+            <a href="https://wallethub.com/edu/cities-with-the-best-worst-public-transportation/65028">Wallet Hub</a>
+            . We used this data of the major cities so we could chart them against the state by state air quality data.
+        </p>
+        <h3>Here is the data we found for public transportation infrastructure:</h3>
+        <div class="table-responsive">
+            <table border="1" class="table">
+                <thead>
+                  <tr style="text-align: right;">
+                    <th></th>
+                    <th>Overall</th>
+                    <th>City</th>
+                    <th>Total Score</th>
+                    <th>Accessibility</th>
+                    <th>Safety</th>
+                    <th>Resources</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th>93</th>
+                    <td>1</td>
+                    <td>Seattle, WA</td>
+                    <td>77.97</td>
+                    <td>7</td>
+                    <td>6</td>
+                    <td>3</td>
+                  </tr>
+                  <tr>
+                    <th>98</th>
+                    <td>2</td>
+                    <td>Boston, MA</td>
+                    <td>77.84</td>
+                    <td>2</td>
+                    <td>34</td>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th>99</th>
+                    <td>3</td>
+                    <td>San Francisco, CA</td>
+                    <td>75.21</td>
+                    <td>1</td>
+                    <td>27</td>
+                    <td>80</td>
+                  </tr>
+                  <tr>
+                    <th>97</th>
+                    <td>4</td>
+                    <td>Washington, DC</td>
+                    <td>71.23</td>
+                    <td>3</td>
+                    <td>48</td>
+                    <td>52</td>
+                  </tr>
+                  <tr>
+                    <th>54</th>
+                    <td>5</td>
+                    <td>Madison, WI</td>
+                    <td>71.06</td>
+                    <td>46</td>
+                    <td>1</td>
+                    <td>4</td>
+                  </tr>
+                  <tr>
+                    <th>96</th>
+                    <td>6</td>
+                    <td>Jersey City, NJ</td>
+                    <td>69.05</td>
+                    <td>4</td>
+                    <td>22</td>
+                    <td>97</td>
+                  </tr>
+                  <tr>
+                    <th>95</th>
+                    <td>7</td>
+                    <td>New York, NY</td>
+                    <td>68.87</td>
+                    <td>5</td>
+                    <td>22</td>
+                    <td>97</td>
+                  </tr>
+                  <tr>
+                    <th>24</th>
+                    <td>8</td>
+                    <td>Reno, NV</td>
+                    <td>68.13</td>
+                    <td>76</td>
+                    <td>8</td>
+                    <td>1</td>
+                  </tr>
+                  <tr>
+                    <th>70</th>
+                    <td>9</td>
+                    <td>Honolulu, HI</td>
+                    <td>67.85</td>
+                    <td>30</td>
+                    <td>13</td>
+                    <td>12</td>
+                  </tr>
+                  <tr>
+                    <th>87</th>
+                    <td>10</td>
+                    <td>Portland, OR</td>
+                    <td>66.82</td>
+                    <td>13</td>
+                    <td>31</td>
+                    <td>29</td>
+                  </tr>
+                  <tr>
+                    <th>92</th>
+                    <td>11</td>
+                    <td>Minneapolis, MN</td>
+                    <td>66.72</td>
+                    <td>8</td>
+                    <td>51</td>
+                    <td>31</td>
+                  </tr>
+                  <tr>
+                    <th>86</th>
+                    <td>12</td>
+                    <td>Denver, CO</td>
+                    <td>65.98</td>
+                    <td>14</td>
+                    <td>25</td>
+                    <td>27</td>
+                  </tr>
+                  <tr>
+                    <th>90</th>
+                    <td>13</td>
+                    <td>Oakland, CA</td>
+                    <td>65.68</td>
+                    <td>10</td>
+                    <td>27</td>
+                    <td>80</td>
+                  </tr>
+                  <tr>
+                    <th>85</th>
+                    <td>14</td>
+                    <td>Los Angeles, CA</td>
+                    <td>64.79</td>
+                    <td>15</td>
+                    <td>15</td>
+                    <td>60</td>
+                  </tr>
+                  <tr>
+                    <th>79</th>
+                    <td>15</td>
+                    <td>San Jose, CA</td>
+                    <td>64.47</td>
+                    <td>21</td>
+                    <td>21</td>
+                    <td>35</td>
+                  </tr>
+                  <tr>
+                    <th>18</th>
+                    <td>16</td>
+                    <td>Boise, ID</td>
+                    <td>64.45</td>
+                    <td>82</td>
+                    <td>3</td>
+                    <td>37</td>
+                  </tr>
+                  <tr>
+                    <th>8</th>
+                    <td>17</td>
+                    <td>Lubbock, TX</td>
+                    <td>64.33</td>
+                    <td>92</td>
+                    <td>14</td>
+                    <td>5</td>
+                  </tr>
+                  <tr>
+                    <th>58</th>
+                    <td>18</td>
+                    <td>Milwaukee, WI</td>
+                    <td>64.18</td>
+                    <td>42</td>
+                    <td>4</td>
+                    <td>18</td>
+                  </tr>
+                  <tr>
+                    <th>68</th>
+                    <td>19</td>
+                    <td>San Diego, CA</td>
+                    <td>64.13</td>
+                    <td>32</td>
+                    <td>11</td>
+                    <td>15</td>
+                  </tr>
+                  <tr>
+                    <th>81</th>
+                    <td>20</td>
+                    <td>Austin, TX</td>
+                    <td>63.66</td>
+                    <td>19</td>
+                    <td>68</td>
+                    <td>2</td>
+                  </tr>
+                  <tr>
+                    <th>88</th>
+                    <td>21</td>
+                    <td>Baltimore, MD</td>
+                    <td>63.50</td>
+                    <td>12</td>
+                    <td>35</td>
+                    <td>79</td>
+                  </tr>
+                  <tr>
+                    <th>94</th>
+                    <td>22</td>
+                    <td>Chicago, IL</td>
+                    <td>63.33</td>
+                    <td>6</td>
+                    <td>71</td>
+                    <td>59</td>
+                  </tr>
+                  <tr>
+                    <th>76</th>
+                    <td>23</td>
+                    <td>Lincoln, NE</td>
+                    <td>63.10</td>
+                    <td>24</td>
+                    <td>20</td>
+                    <td>46</td>
+                  </tr>
+                  <tr>
+                    <th>11</th>
+                    <td>24</td>
+                    <td>Chula Vista, CA</td>
+                    <td>62.46</td>
+                    <td>89</td>
+                    <td>11</td>
+                    <td>15</td>
+                  </tr>
+                  <tr>
+                    <th>1</th>
+                    <td>25</td>
+                    <td>Laredo, TX</td>
+                    <td>61.52</td>
+                    <td>99</td>
+                    <td>5</td>
+                    <td>43</td>
+                  </tr>
+                  <tr>
+                    <th>65</th>
+                    <td>26</td>
+                    <td>Santa Ana, CA</td>
+                    <td>61.48</td>
+                    <td>35</td>
+                    <td>15</td>
+                    <td>60</td>
+                  </tr>
+                  <tr>
+                    <th>62</th>
+                    <td>27</td>
+                    <td>Long Beach, CA</td>
+                    <td>61.25</td>
+                    <td>38</td>
+                    <td>15</td>
+                    <td>60</td>
+                  </tr>
+                  <tr>
+                    <th>31</th>
+                    <td>28</td>
+                    <td>Omaha, NE</td>
+                    <td>60.93</td>
+                    <td>69</td>
+                    <td>1</td>
+                    <td>93</td>
+                  </tr>
+                  <tr>
+                    <th>34</th>
+                    <td>29</td>
+                    <td>Wichita, KS</td>
+                    <td>60.76</td>
+                    <td>66</td>
+                    <td>7</td>
+                    <td>30</td>
+                  </tr>
+                  <tr>
+                    <th>84</th>
+                    <td>30</td>
+                    <td>Newark, NJ</td>
+                    <td>60.17</td>
+                    <td>16</td>
+                    <td>22</td>
+                    <td>97</td>
+                  </tr>
+                  <tr>
+                    <th>42</th>
+                    <td>31</td>
+                    <td>Memphis, TN</td>
+                    <td>60.14</td>
+                    <td>58</td>
+                    <td>10</td>
+                    <td>87</td>
+                  </tr>
+                  <tr>
+                    <th>73</th>
+                    <td>32</td>
+                    <td>St. Paul, MN</td>
+                    <td>59.00</td>
+                    <td>27</td>
+                    <td>51</td>
+                    <td>31</td>
+                  </tr>
+                  <tr>
+                    <th>61</th>
+                    <td>33</td>
+                    <td>Pittsburgh, PA</td>
+                    <td>58.96</td>
+                    <td>39</td>
+                    <td>53</td>
+                    <td>33</td>
+                  </tr>
+                  <tr>
+                    <th>39</th>
+                    <td>34</td>
+                    <td>El Paso, TX</td>
+                    <td>58.51</td>
+                    <td>61</td>
+                    <td>40</td>
+                    <td>45</td>
+                  </tr>
+                  <tr>
+                    <th>57</th>
+                    <td>35</td>
+                    <td>Fremont, CA</td>
+                    <td>58.29</td>
+                    <td>43</td>
+                    <td>27</td>
+                    <td>80</td>
+                  </tr>
+                  <tr>
+                    <th>43</th>
+                    <td>36</td>
+                    <td>Greensboro, NC</td>
+                    <td>58.21</td>
+                    <td>57</td>
+                    <td>43</td>
+                    <td>36</td>
+                  </tr>
+                  <tr>
+                    <th>63</th>
+                    <td>37</td>
+                    <td>Cincinnati, OH</td>
+                    <td>58.17</td>
+                    <td>37</td>
+                    <td>42</td>
+                    <td>40</td>
+                  </tr>
+                  <tr>
+                    <th>30</th>
+                    <td>38</td>
+                    <td>Irvine, CA</td>
+                    <td>57.88</td>
+                    <td>70</td>
+                    <td>15</td>
+                    <td>60</td>
+                  </tr>
+                  <tr>
+                    <th>23</th>
+                    <td>39</td>
+                    <td>Toledo, OH</td>
+                    <td>57.77</td>
+                    <td>77</td>
+                    <td>58</td>
+                    <td>7</td>
+                  </tr>
+                  <tr>
+                    <th>89</th>
+                    <td>40</td>
+                    <td>Albuquerque, NM</td>
+                    <td>57.67</td>
+                    <td>11</td>
+                    <td>88</td>
+                    <td>19</td>
+                  </tr>
+                  <tr>
+                    <th>51</th>
+                    <td>41</td>
+                    <td>San Antonio, TX</td>
+                    <td>57.63</td>
+                    <td>49</td>
+                    <td>55</td>
+                    <td>6</td>
+                  </tr>
+                  <tr>
+                    <th>19</th>
+                    <td>42</td>
+                    <td>Aurora, CO</td>
+                    <td>57.60</td>
+                    <td>81</td>
+                    <td>25</td>
+                    <td>27</td>
+                  </tr>
+                  <tr>
+                    <th>46</th>
+                    <td>43</td>
+                    <td>Corpus Christi, TX</td>
+                    <td>57.43</td>
+                    <td>54</td>
+                    <td>67</td>
+                    <td>8</td>
+                  </tr>
+                  <tr>
+                    <th>26</th>
+                    <td>44</td>
+                    <td>Anaheim, CA</td>
+                    <td>57.16</td>
+                    <td>74</td>
+                    <td>15</td>
+                    <td>60</td>
+                  </tr>
+                  <tr>
+                    <th>40</th>
+                    <td>45</td>
+                    <td>San Bernardino, CA</td>
+                    <td>56.94</td>
+                    <td>60</td>
+                    <td>32</td>
+                    <td>49</td>
+                  </tr>
+                  <tr>
+                    <th>82</th>
+                    <td>46</td>
+                    <td>Cleveland, OH</td>
+                    <td>56.65</td>
+                    <td>18</td>
+                    <td>73</td>
+                    <td>53</td>
+                  </tr>
+                  <tr>
+                    <th>78</th>
+                    <td>47</td>
+                    <td>Atlanta, GA</td>
+                    <td>56.47</td>
+                    <td>22</td>
+                    <td>41</td>
+                    <td>96</td>
+                  </tr>
+                  <tr>
+                    <th>35</th>
+                    <td>48</td>
+                    <td>Riverside, CA</td>
+                    <td>56.37</td>
+                    <td>65</td>
+                    <td>32</td>
+                    <td>49</td>
+                  </tr>
+                  <tr>
+                    <th>3</th>
+                    <td>49</td>
+                    <td>Birmingham, AL</td>
+                    <td>56.15</td>
+                    <td>97</td>
+                    <td>30</td>
+                    <td>44</td>
+                  </tr>
+                  <tr>
+                    <th>64</th>
+                    <td>50</td>
+                    <td>Durham, NC</td>
+                    <td>56.06</td>
+                    <td>36</td>
+                    <td>49</td>
+                    <td>66</td>
+                  </tr>
+                  <tr>
+                    <th>56</th>
+                    <td>51</td>
+                    <td>Las Vegas, NV</td>
+                    <td>56.06</td>
+                    <td>44</td>
+                    <td>37</td>
+                    <td>76</td>
+                  </tr>
+                  <tr>
+                    <th>80</th>
+                    <td>52</td>
+                    <td>Miami, FL</td>
+                    <td>55.86</td>
+                    <td>20</td>
+                    <td>45</td>
+                    <td>94</td>
+                  </tr>
+                  <tr>
+                    <th>67</th>
+                    <td>53</td>
+                    <td>Tucson, AZ</td>
+                    <td>55.85</td>
+                    <td>33</td>
+                    <td>57</td>
+                    <td>41</td>
+                  </tr>
+                  <tr>
+                    <th>48</th>
+                    <td>54</td>
+                    <td>Detroit, MI</td>
+                    <td>55.47</td>
+                    <td>52</td>
+                    <td>47</td>
+                    <td>73</td>
+                  </tr>
+                  <tr>
+                    <th>74</th>
+                    <td>55</td>
+                    <td>Phoenix, AZ</td>
+                    <td>55.39</td>
+                    <td>26</td>
+                    <td>61</td>
+                    <td>67</td>
+                  </tr>
+                  <tr>
+                    <th>75</th>
+                    <td>56</td>
+                    <td>Orlando, FL</td>
+                    <td>55.07</td>
+                    <td>25</td>
+                    <td>78</td>
+                    <td>38</td>
+                  </tr>
+                  <tr>
+                    <th>37</th>
+                    <td>57</td>
+                    <td>Lexington-Fayette, KY</td>
+                    <td>54.96</td>
+                    <td>63</td>
+                    <td>77</td>
+                    <td>11</td>
+                  </tr>
+                  <tr>
+                    <th>50</th>
+                    <td>58</td>
+                    <td>Anchorage, AK</td>
+                    <td>54.88</td>
+                    <td>50</td>
+                    <td>54</td>
+                    <td>42</td>
+                  </tr>
+                  <tr>
+                    <th>12</th>
+                    <td>59</td>
+                    <td>Fort Wayne, IN</td>
+                    <td>54.85</td>
+                    <td>88</td>
+                    <td>50</td>
+                    <td>55</td>
+                  </tr>
+                  <tr>
+                    <th>21</th>
+                    <td>60</td>
+                    <td>Colorado Springs, CO</td>
+                    <td>54.66</td>
+                    <td>79</td>
+                    <td>72</td>
+                    <td>9</td>
+                  </tr>
+                  <tr>
+                    <th>38</th>
+                    <td>61</td>
+                    <td>Jacksonville, FL</td>
+                    <td>54.16</td>
+                    <td>62</td>
+                    <td>36</td>
+                    <td>83</td>
+                  </tr>
+                  <tr>
+                    <th>55</th>
+                    <td>62</td>
+                    <td>Columbus, OH</td>
+                    <td>54.13</td>
+                    <td>45</td>
+                    <td>59</td>
+                    <td>54</td>
+                  </tr>
+                  <tr>
+                    <th>60</th>
+                    <td>63</td>
+                    <td>Buffalo, NY</td>
+                    <td>53.91</td>
+                    <td>40</td>
+                    <td>56</td>
+                    <td>75</td>
+                  </tr>
+                  <tr>
+                    <th>10</th>
+                    <td>64</td>
+                    <td>Stockton, CA</td>
+                    <td>53.82</td>
+                    <td>90</td>
+                    <td>9</td>
+                    <td>84</td>
+                  </tr>
+                  <tr>
+                    <th>71</th>
+                    <td>65</td>
+                    <td>Dallas, TX</td>
+                    <td>53.78</td>
+                    <td>29</td>
+                    <td>79</td>
+                    <td>20</td>
+                  </tr>
+                  <tr>
+                    <th>69</th>
+                    <td>66</td>
+                    <td>Nashville, TN</td>
+                    <td>53.73</td>
+                    <td>31</td>
+                    <td>60</td>
+                    <td>85</td>
+                  </tr>
+                  <tr>
+                    <th>32</th>
+                    <td>67</td>
+                    <td>Scottsdale, AZ</td>
+                    <td>53.32</td>
+                    <td>68</td>
+                    <td>61</td>
+                    <td>67</td>
+                  </tr>
+                  <tr>
+                    <th>66</th>
+                    <td>68</td>
+                    <td>Houston, TX</td>
+                    <td>53.32</td>
+                    <td>34</td>
+                    <td>70</td>
+                    <td>65</td>
+                  </tr>
+                  <tr>
+                    <th>6</th>
+                    <td>69</td>
+                    <td>North Las Vegas, NV</td>
+                    <td>52.72</td>
+                    <td>94</td>
+                    <td>37</td>
+                    <td>76</td>
+                  </tr>
+                  <tr>
+                    <th>49</th>
+                    <td>70</td>
+                    <td>Sacramento, CA</td>
+                    <td>52.09</td>
+                    <td>51</td>
+                    <td>44</td>
+                    <td>90</td>
+                  </tr>
+                  <tr>
+                    <th>53</th>
+                    <td>71</td>
+                    <td>Virginia Beach, VA</td>
+                    <td>51.99</td>
+                    <td>47</td>
+                    <td>74</td>
+                    <td>56</td>
+                  </tr>
+                  <tr>
+                    <th>15</th>
+                    <td>72</td>
+                    <td>Winston-Salem, NC</td>
+                    <td>51.63</td>
+                    <td>85</td>
+                    <td>69</td>
+                    <td>14</td>
+                  </tr>
+                  <tr>
+                    <th>59</th>
+                    <td>73</td>
+                    <td>Raleigh, NC</td>
+                    <td>51.42</td>
+                    <td>41</td>
+                    <td>89</td>
+                    <td>13</td>
+                  </tr>
+                  <tr>
+                    <th>52</th>
+                    <td>74</td>
+                    <td>Norfolk, VA</td>
+                    <td>51.18</td>
+                    <td>48</td>
+                    <td>74</td>
+                    <td>56</td>
+                  </tr>
+                  <tr>
+                    <th>44</th>
+                    <td>75</td>
+                    <td>Irving, TX</td>
+                    <td>51.12</td>
+                    <td>56</td>
+                    <td>79</td>
+                    <td>20</td>
+                  </tr>
+                  <tr>
+                    <th>2</th>
+                    <td>76</td>
+                    <td>Glendale, AZ</td>
+                    <td>50.84</td>
+                    <td>98</td>
+                    <td>61</td>
+                    <td>67</td>
+                  </tr>
+                  <tr>
+                    <th>16</th>
+                    <td>77</td>
+                    <td>Garland, TX</td>
+                    <td>50.38</td>
+                    <td>84</td>
+                    <td>79</td>
+                    <td>20</td>
+                  </tr>
+                  <tr>
+                    <th>17</th>
+                    <td>78</td>
+                    <td>Hialeah, FL</td>
+                    <td>50.28</td>
+                    <td>83</td>
+                    <td>45</td>
+                    <td>94</td>
+                  </tr>
+                  <tr>
+                    <th>29</th>
+                    <td>79</td>
+                    <td>Fresno, CA</td>
+                    <td>50.22</td>
+                    <td>71</td>
+                    <td>87</td>
+                    <td>26</td>
+                  </tr>
+                  <tr>
+                    <th>5</th>
+                    <td>80</td>
+                    <td>Henderson, NV</td>
+                    <td>50.09</td>
+                    <td>95</td>
+                    <td>37</td>
+                    <td>76</td>
+                  </tr>
+                  <tr>
+                    <th>36</th>
+                    <td>81</td>
+                    <td>Louisville, KY</td>
+                    <td>49.83</td>
+                    <td>64</td>
+                    <td>85</td>
+                    <td>47</td>
+                  </tr>
+                  <tr>
+                    <th>20</th>
+                    <td>82</td>
+                    <td>Chandler, AZ</td>
+                    <td>49.55</td>
+                    <td>80</td>
+                    <td>61</td>
+                    <td>67</td>
+                  </tr>
+                  <tr>
+                    <th>7</th>
+                    <td>83</td>
+                    <td>Chesapeake, VA</td>
+                    <td>49.38</td>
+                    <td>93</td>
+                    <td>74</td>
+                    <td>56</td>
+                  </tr>
+                  <tr>
+                    <th>25</th>
+                    <td>84</td>
+                    <td>Fort Worth, TX</td>
+                    <td>49.26</td>
+                    <td>75</td>
+                    <td>79</td>
+                    <td>20</td>
+                  </tr>
+                  <tr>
+                    <th>22</th>
+                    <td>85</td>
+                    <td>Plano, TX</td>
+                    <td>49.13</td>
+                    <td>78</td>
+                    <td>79</td>
+                    <td>20</td>
+                  </tr>
+                  <tr>
+                    <th>14</th>
+                    <td>86</td>
+                    <td>Mesa, AZ</td>
+                    <td>49.00</td>
+                    <td>86</td>
+                    <td>61</td>
+                    <td>67</td>
+                  </tr>
+                  <tr>
+                    <th>41</th>
+                    <td>87</td>
+                    <td>Bakersfield, CA</td>
+                    <td>48.98</td>
+                    <td>59</td>
+                    <td>86</td>
+                    <td>74</td>
+                  </tr>
+                  <tr>
+                    <th>77</th>
+                    <td>88</td>
+                    <td>Kansas City, MO</td>
+                    <td>48.76</td>
+                    <td>23</td>
+                    <td>93</td>
+                    <td>34</td>
+                  </tr>
+                  <tr>
+                    <th>91</th>
+                    <td>89</td>
+                    <td>Philadelphia, PA</td>
+                    <td>48.73</td>
+                    <td>9</td>
+                    <td>97</td>
+                    <td>86</td>
+                  </tr>
+                  <tr>
+                    <th>0</th>
+                    <td>90</td>
+                    <td>Gilbert, AZ</td>
+                    <td>48.52</td>
+                    <td>100</td>
+                    <td>61</td>
+                    <td>67</td>
+                  </tr>
+                  <tr>
+                    <th>83</th>
+                    <td>91</td>
+                    <td>St. Louis, MO</td>
+                    <td>46.51</td>
+                    <td>17</td>
+                    <td>96</td>
+                    <td>51</td>
+                  </tr>
+                  <tr>
+                    <th>9</th>
+                    <td>92</td>
+                    <td>Baton Rouge, LA</td>
+                    <td>46.26</td>
+                    <td>91</td>
+                    <td>91</td>
+                    <td>17</td>
+                  </tr>
+                  <tr>
+                    <th>4</th>
+                    <td>93</td>
+                    <td>Arlington, TX</td>
+                    <td>45.70</td>
+                    <td>96</td>
+                    <td>79</td>
+                    <td>20</td>
+                  </tr>
+                  <tr>
+                    <th>45</th>
+                    <td>94</td>
+                    <td>Oklahoma City, OK</td>
+                    <td>45.64</td>
+                    <td>55</td>
+                    <td>90</td>
+                    <td>89</td>
+                  </tr>
+                  <tr>
+                    <th>28</th>
+                    <td>95</td>
+                    <td>Tulsa, OK</td>
+                    <td>43.02</td>
+                    <td>72</td>
+                    <td>94</td>
+                    <td>48</td>
+                  </tr>
+                  <tr>
+                    <th>72</th>
+                    <td>96</td>
+                    <td>New Orleans, LA</td>
+                    <td>42.43</td>
+                    <td>28</td>
+                    <td>92</td>
+                    <td>100</td>
+                  </tr>
+                  <tr>
+                    <th>47</th>
+                    <td>97</td>
+                    <td>Charlotte, NC</td>
+                    <td>40.67</td>
+                    <td>53</td>
+                    <td>95</td>
+                    <td>88</td>
+                  </tr>
+                  <tr>
+                    <th>33</th>
+                    <td>98</td>
+                    <td>Tampa, FL</td>
+                    <td>24.69</td>
+                    <td>67</td>
+                    <td>98</td>
+                    <td>91</td>
+                  </tr>
+                  <tr>
+                    <th>27</th>
+                    <td>99</td>
+                    <td>St. Petersburg, FL</td>
+                    <td>24.03</td>
+                    <td>73</td>
+                    <td>98</td>
+                    <td>91</td>
+                  </tr>
+                  <tr>
+                    <th>13</th>
+                    <td>100</td>
+                    <td>Indianapolis, IN</td>
+                    <td>21.13</td>
+                    <td>87</td>
+                    <td>100</td>
+                    <td>39</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+    </div>
+</body>
+</html>
