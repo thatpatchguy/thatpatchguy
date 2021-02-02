@@ -1,0 +1,127 @@
+html {
+    position: relative;
+    min-height: 100%;
+  }
+
+body {
+  /* Padding bottom by footer height */
+  padding-bottom: 80px;
+  background-color: #DED1A4;
+}
+
+.jumbotron{
+  background-color: #49ACAC;
+}
+
+
+#piano {
+    background-image: url('/assets/images/piano.jpg');
+    background-repeat: no-repeat;
+    width: 100%;
+}
+
+
+/* Dropdown Button */
+.dropbtn {
+  background-color: #56DDD3;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #E44134;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  justify-content: center;
+  display: inline-block;
+}
+
+select {
+  height: 50px;
+  width: 100%;
+  text-align: center;
+  background-color: #56DDD3;
+  border-radius: 10px;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content select {
+  width: 100%;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
+
+body {
+  padding: 20px;
+}
+button {
+  margin: 20px;
+  line-height: 60px;
+  font-weight: bold;
+  padding: 0 40px;
+  background: #49ACAC;
+  border: none;
+  width: 20%;
+  border-radius: 10px;
+}
+button:hover {
+  background: #E44134;
+}
+
+
+
+#play_pause {
+  justify-content: center;
+  font-size: larger;
+  vertical-align: middle;
+}
+
+.loop_num {
+  padding: 0 40px;
+  background: #56DDD3;
+  border: black;
+  border-width: 2px;
+  margin: 20px;
+  font-weight: bold;
+  line-height: 60px;
+  border-radius: 10px;
+}
+
+.boxen {
+  background-color: #56DDD3;
+  border-radius: 10px;
+  padding: 10px;
+  height: 100%;
+  margin: 10px;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
