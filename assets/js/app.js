@@ -197,7 +197,7 @@ function drop4Changed(){
     makeChords(selection);
 }
 
-d3.json('https://basement-producers-toolkit.herokuapp.com/get_songs').then(function(scrape_data){
+d3.json('https://cors-anywhere.herokuapp.com/https://basement-producers-toolkit.herokuapp.com/get_songs').then(function(scrape_data){
     song_drop = document.getElementById("song_drop");
 
     scrape_data.forEach(song => {
@@ -217,7 +217,7 @@ d3.json('https://basement-producers-toolkit.herokuapp.com/get_songs').then(funct
 
 function song_selected(){
     var selected_song = document.getElementById("song_drop").value;
-    d3.json(`https://basement-producers-toolkit.herokuapp.com${selected_song}`).then(function(chord_data){
+    d3.json(`https://cors-anywhere.herokuapp.com/https://basement-producers-toolkit.herokuapp.com${selected_song}`).then(function(chord_data){
         var intro = document.getElementById("song_intro_info");
         var allChords = document.getElementById("song_chords_info");
         var intro_html = `<h2>Intro Chords</h2> <br><h4>`;
