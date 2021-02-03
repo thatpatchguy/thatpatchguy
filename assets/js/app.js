@@ -228,7 +228,7 @@ function song_selected(){
         console.log(the_chords);
         console.log(chord_data);
         for (const property in the_chords.all_chords[0]){
-            html_stuff += `<tr><td>${property}</td><td>${the_chords[property]}</td></tr>`;
+            html_stuff += `<tr><td>${property}</td><td>${the_chords.all_chords[0][property]}</td></tr>`;
         }
         html_stuff += `</table>`;
         allChords.innerHTML = html_stuff;
