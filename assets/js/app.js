@@ -82,7 +82,7 @@ d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
 
 
 function makeChords(selection){
-    d3.csv("/assets/data/chords.csv").then(function(data, err) {
+    d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
         if (err) throw err;
 
 
