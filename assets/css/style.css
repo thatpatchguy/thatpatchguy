@@ -15,7 +15,7 @@ body {
 
 
 #piano {
-    background-image: url('piano_chords/assets/images/piano.jpg');
+    background-image: url('../images/piano.jpg');
     background-repeat: no-repeat;
     width: 100%;
 }

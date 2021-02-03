@@ -45,7 +45,7 @@ var svg = d3.select("#piano")
 
 var pianoGroup = svg.append("g");
 
-d3.csv("/assets/data/chords.csv").then(function(data, err) {
+d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
     var chord_names = [];
     data.forEach(function(data){
         chord_names.push(data.chord_name);
@@ -102,7 +102,7 @@ function makeChords(selection){
         console.log(keys);
         locationArray = [];
 
-        d3.csv("assets/data/locations.csv").then(function(ldata,err) {
+        d3.csv("/thatpatchguy/assets/data/locations.csv").then(function(ldata,err) {
             ldata.forEach(function(ldata){
                 if (ldata.note == keys[0] || ldata.note == keys[1] ||ldata.note == keys[2] ||ldata.note == keys[3]) {
                     var coor = {x: ldata.x, y: ldata.y};
