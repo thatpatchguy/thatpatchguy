@@ -80,7 +80,7 @@ d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
 
 
 
-
+// Draws the chords
 function makeChords(selection){
     d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
         if (err) throw err;
