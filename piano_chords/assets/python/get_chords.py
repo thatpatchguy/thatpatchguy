@@ -2,8 +2,6 @@
 import os
 from bs4 import BeautifulSoup as bs
 import requests
-from splinter import Browser
-import pandas as pd
 from flask import Flask, jsonify
 from collections import Counter
 
@@ -24,7 +22,7 @@ def get_them(title, artist):
     intro_chords = chords[:4]
     count = Counter(chords)
     dict1 = [{"intro_chords": intro_chords}]
-    dict2 = [count]
+    dict2 = [{"all_chords": [count]}]
     data = []
     data.append(dict1)
     data.append(dict2)

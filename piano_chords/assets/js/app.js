@@ -82,7 +82,7 @@ d3.csv("/assets/data/chords.csv").then(function(data, err) {
 
 
 function makeChords(selection){
-    d3.csv("./assets/data/chords.csv").then(function(data, err) {
+    d3.csv("/assets/data/chords.csv").then(function(data, err) {
         if (err) throw err;
 
 
@@ -102,7 +102,7 @@ function makeChords(selection){
         console.log(keys);
         locationArray = [];
 
-        d3.csv("./assets/data/locations.csv").then(function(ldata,err) {
+        d3.csv("assets/data/locations.csv").then(function(ldata,err) {
             ldata.forEach(function(ldata){
                 if (ldata.note == keys[0] || ldata.note == keys[1] ||ldata.note == keys[2] ||ldata.note == keys[3]) {
                     var coor = {x: ldata.x, y: ldata.y};
