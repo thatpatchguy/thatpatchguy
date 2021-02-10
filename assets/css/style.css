@@ -20,7 +20,9 @@ body {
     width: 100%;
 }
 
-
+.drops {
+  padding: 10px;
+}
 /* Dropdown Button */
 .dropbtn {
   background-color: #56DDD3;
