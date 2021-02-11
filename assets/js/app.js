@@ -247,8 +247,9 @@ function song_selected(){
         var intro = document.getElementById("song_intro_info");
         var allChords = document.getElementById("song_chords_info");
         var intro_html = `<h2>Intro Chords</h2> <br><h4>`;
+        var table_data = [];
         var html_stuff = `<h2>All chords in song</h2><br>`+
-                                `<table style="width:100%">`+
+                                `<table style="width:100%" id="allChord" class="sortable">`+
                                     `<tr><th>Chord</th><th>Occurences</th></tr>`;
         the_chords = chord_data[1][0];
         //For each chord combination add a table row
@@ -257,6 +258,8 @@ function song_selected(){
         }
         html_stuff += `</table>`;
         allChords.innerHTML = html_stuff;
+        var chordTable = document.getElementById("allChord");
+        sorttable.makeSortable(chordTable);
         //Fills the dropdowns with the 4 intro chords
         for (var i = 0; i<chord_data[0][0].intro_chords.length;i++){
 
