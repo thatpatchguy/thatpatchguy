@@ -67,6 +67,8 @@ button a {
     width: 50%;
     height: 50px;
     background-color: rgb(50,50,50);
+    padding: 10px;
+    margin: 5px;
 }
 
 .big_button a {
