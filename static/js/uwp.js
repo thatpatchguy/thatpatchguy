@@ -95,3 +95,17 @@ function dropdownChanged(){
         tour_layer.addTo(myMap);
     });
 }
+
+var explain = L.control({
+    position: "bottomleft"
+  });
+
+explain.onAdd = function() {
+    var titleDiv = L.DomUtil.create("div", "info legend");
+
+    titleDiv.innerHTML = `<h3>Please select a tour to see where UWP went during a given tour</h3>`;
+
+    return titleDiv;
+};
+
+explain.addTo(myMap);
