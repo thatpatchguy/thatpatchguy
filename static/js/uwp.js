@@ -96,16 +96,16 @@ function dropdownChanged(){
     });
 }
 
-var explain = L.control({
-    position: "bottomleft"
-  });
+// var explain = L.control({
+//     position: "bottomleft"
+//   });
 
-explain.onAdd = function() {
-    var titleDiv = L.DomUtil.create("div", "info legend");
+// explain.onAdd = function() {
+//     var titleDiv = L.DomUtil.create("div", "info legend");
 
-    titleDiv.innerHTML = `<h3>Please select a tour to see where UWP went during a given tour</h3>`;
+//     titleDiv.innerHTML = `<h3>Please select a tour to see where UWP went during a given tour</h3>`;
 
-    return titleDiv;
-};
+//     return titleDiv;
+// };
 
-explain.addTo(myMap);
+// explain.addTo(myMap);
