@@ -32,7 +32,7 @@ var drop1 = document.getElementById("drop1");
 var drop2 = document.getElementById("drop2");
 var drop3 = document.getElementById("drop3");
 
-d3.csv("/assets/data/chords.csv").then(function(data, err) {
+d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
     //Create array to hold data
     var chord_names = [];
     data.forEach(function(data){
