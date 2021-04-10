@@ -9,6 +9,7 @@ function predict_those_chords(){
     if(chord1 && chord2 && chord3){
         d3.json(`https://basement-producers-toolkit.azurewebsites.net/predict/${chord1}/${chord2}/${chord3}`).then(function(chord_data){
             var prediction_info = document.getElementById("prediction_box");
+            prediction_info.hidden = false;
             var html_stuff = `<h2>Final Chord Predictions</h2><br>` +
                                 `<table style="width:100%" id="predictChord">` +
                                 `<tr><th>Chord</th><th>Confidence</th></tr>`;

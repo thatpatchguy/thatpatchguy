@@ -246,6 +246,8 @@ function song_selected(){
     d3.json(`https://basement-producers-toolkit.azurewebsites.net/${selected_song}`).then(function(chord_data){
         var intro = document.getElementById("song_intro_info");
         var allChords = document.getElementById("song_chords_info");
+        intro.hidden = false;
+        allChords.hidden = false;
         var intro_html = `<h2>Intro Chords</h2> <br><h4>`;
         var table_data = [];
         var html_stuff = `<h2>All chords in song</h2><br>`+

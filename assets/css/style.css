@@ -25,7 +25,7 @@ body {
 }
 /* Dropdown Button */
 .dropbtn {
-  background-color: #A30083;
+  background-color: #93A8AC;
   color: white;
   padding: 16px;
   font-size: 16px;
@@ -48,7 +48,7 @@ select {
   height: 50px;
   width: 100%;
   text-align: center;
-  background-color: #A30083;
+  background-color: #93A8AC;
   border-radius: 10px;
 }
 
@@ -113,7 +113,7 @@ button:hover {
 
 .loop_num {
   padding: 0 40px;
-  background: #A30083;
+  background: #93A8AC;
   border: black;
   border-width: 2px;
   margin: 20px;
@@ -123,7 +123,7 @@ button:hover {
 }
 
 .boxen {
-  background-color: #A30083;
+  background-color: #93A8AC;
   border-radius: 10px;
   padding: 10px;
   height: 100%;
@@ -136,9 +136,9 @@ table, th, td {
 
 
 .nav-link {
-  background-color: #ddd;
   color: black;
 }
+
 .tooltip {
   position: relative;
   display: inline-block;
@@ -162,4 +162,12 @@ table, th, td {
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+table {
+  background-color: white;
+}
+
+.nav-item {
+  background-color: #355691;
 }
