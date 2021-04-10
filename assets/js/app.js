@@ -51,7 +51,7 @@ var svg = d3.select("#piano")
 var pianoGroup = svg.append("g");
 
 //Pulls in chord data
-d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
+d3.csv("/assets/data/chords.csv").then(function(data, err) {
     //Create array to hold data
     var chord_names = [];
     data.forEach(function(data){
@@ -89,7 +89,7 @@ d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
 
 // Draws the chord on piano
 function makeChords(selection){
-    d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
+    d3.csv("/assets/data/chords.csv").then(function(data, err) {
         if (err) throw err;
 
         //To hold the keys we need to highlight
@@ -108,7 +108,7 @@ function makeChords(selection){
         })
         locationArray = [];
         //Now we are going to find the locations of the notes we want to play
-        d3.csv("/thatpatchguy/assets/data/locations.csv").then(function(ldata,err) {
+        d3.csv("/assets/data/locations.csv").then(function(ldata,err) {
             ldata.forEach(function(ldata){
                 //Checks if row is one of our keys
                 if (ldata.note == keys[0] || ldata.note == keys[1] ||ldata.note == keys[2] ||ldata.note == keys[3]) {
@@ -129,7 +129,7 @@ function makeChords(selection){
                 .attr("cy", d => d.y)
                 .attr("r", 20)
                 .attr("color", "black")
-                .attr("fill", '#E44134');
+                .attr("fill", '#D7BE82');
         })
 
 
@@ -188,7 +188,7 @@ button.innerHTML = "Play";
 
 //Creates box to show what chord is being played
 var num = document.createElement("div");
-num.setAttribute("class", "loop_num")
+num.setAttribute("class", "loop_num");
 
 //Adds play button and num container to row
 var play_pause = document.getElementById("play_pause");

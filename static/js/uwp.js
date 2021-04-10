@@ -61,8 +61,8 @@ d3.csv("Resources/tour_stops.csv", function(tour){
     // console.log(tour)
     tours = [];
     for (var i=0; i< tour.length; i++){
-        if (tours.includes(tour[i].Tour)){}
-        else {tours.push(tour[i].Tour);}
+        if (tours.includes(tour[i].Cast)){}
+        else {tours.push(tour[i].Cast);}
     }
     for (var i = 0; i<tours.length; i++){
         var opt = document.createElement("option");
@@ -85,7 +85,7 @@ function dropdownChanged(){
     tour_layer.clearLayers();
     d3.csv("Resources/tour_stops.csv", function(tour){
         for (var i=0; i< tour.length; i++){
-            if (tour[i].Tour == selection){
+            if (tour[i].Cast == selection){
                 var newMarker = L.marker([tour[i].Lat, tour[i].Long], {icon: myIcon});
                 newMarker.addTo(tour_layer);
                 newMarker.bindPopup(tour[i].Tour + "<br>" + tour[i].City + " " + tour[i].State + " " + tour[i].Country);
