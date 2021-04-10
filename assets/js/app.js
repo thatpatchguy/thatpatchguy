@@ -51,7 +51,7 @@ var svg = d3.select("#piano")
 var pianoGroup = svg.append("g");
 
 //Pulls in chord data
-d3.csv("/assets/data/chords.csv").then(function(data, err) {
+d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
     //Create array to hold data
     var chord_names = [];
     data.forEach(function(data){
@@ -89,7 +89,7 @@ d3.csv("/assets/data/chords.csv").then(function(data, err) {
 
 // Draws the chord on piano
 function makeChords(selection){
-    d3.csv("/assets/data/chords.csv").then(function(data, err) {
+    d3.csv("/thatpatchguy/assets/data/chords.csv").then(function(data, err) {
         if (err) throw err;
 
         //To hold the keys we need to highlight
@@ -108,7 +108,7 @@ function makeChords(selection){
         })
         locationArray = [];
         //Now we are going to find the locations of the notes we want to play
-        d3.csv("/assets/data/locations.csv").then(function(ldata,err) {
+        d3.csv("/thatpatchguy/assets/data/locations.csv").then(function(ldata,err) {
             ldata.forEach(function(ldata){
                 //Checks if row is one of our keys
                 if (ldata.note == keys[0] || ldata.note == keys[1] ||ldata.note == keys[2] ||ldata.note == keys[3]) {
@@ -217,7 +217,7 @@ function drop4Changed(){
 }
 
 //Gets songs using webscraping on python hosted on heroku
-d3.json('https://basement-producers-toolkit.herokuapp.com/get_songs').then(function(scrape_data){
+d3.json('https://basement-producers-toolkit.azurewebsites.net/get_songs').then(function(scrape_data){
     song_drop = document.getElementById("song_drop");
 
     //For each song we are going to create an option in the dropdown list and assign a value of the url we need to append
@@ -243,7 +243,7 @@ function song_selected(){
     //Get selected value
     var selected_song = document.getElementById("song_drop").value;
     //Call heroku api I set up to scrape chords from website
-    d3.json(`https://basement-producers-toolkit.herokuapp.com${selected_song}`).then(function(chord_data){
+    d3.json(`https://basement-producers-toolkit.azurewebsites.net/${selected_song}`).then(function(chord_data){
         var intro = document.getElementById("song_intro_info");
         var allChords = document.getElementById("song_chords_info");
         var intro_html = `<h2>Intro Chords</h2> <br><h4>`;
