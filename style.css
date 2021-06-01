@@ -65,7 +65,7 @@ button a {
 .big_button {
     border-radius: 5px;
     width: 50%;
-    height: 50px;
+    height: 180px;
     background-color: rgb(50,50,50);
     padding: 10px;
     margin: 5px;
@@ -73,4 +73,19 @@ button a {
 
 .big_button a {
     color: white;
+}
+
+.buttonpic {
+    width: 80%;
+    height: 80%;
+    padding:0px;
+    margin: 0px;
+}
+
+#subhead {
+    background-color: rgb(50,50,50);
+    color: white;
+    padding: 40px;
+    margin-left: 20%;
+    margin-right: 20%;
 }
