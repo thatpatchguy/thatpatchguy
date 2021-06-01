@@ -29,8 +29,8 @@ h1 {
 }
 
 img {
-    width: 65ex;
-    height: 50ex;
+    /* width: 65ex;
+    height: 50ex; */
     border-radius: 5px;
     margin-top: 5ex;
 }
