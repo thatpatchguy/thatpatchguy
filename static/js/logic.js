@@ -1,5 +1,10 @@
 //Creating mapbox map layers
 
+// Layer groups for USGS and EMSC
+var usgsLayer = new L.LayerGroup();
+var emscLayer = new L.LayerGroup();
+var tectonic = new L.LayerGroup();
+
 var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
     attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
     tileSize: 512,
@@ -20,11 +25,9 @@ var satmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y
 
 //Creating map centered on US with majority of data
 var myMap = L.map("map", {
-    center: [
-    37.09, -95.71
-    ],
+    center: [37.09, -95.71],
     zoom: 4,
-    layers: [streetmap, satmap]
+    layers: [streetmap, usgsLayer, emscLayer] // Only one base layer!
 });
 
 var baseMaps = {
@@ -32,11 +35,9 @@ var baseMaps = {
     Street: streetmap
 };
 
-var earthquakes = new L.LayerGroup();
-var tectonic = new L.LayerGroup();
-
 var overlayMaps = {
-    Earthquakes: earthquakes,
+    "USGS Earthquakes": usgsLayer,
+    "EMSC Earthquakes": emscLayer,
     "Tectonic Plates": tectonic
 };
 
@@ -95,10 +96,11 @@ function fetchAndDisplayEarthquakes(daysAgo) {
     var queryUrl = "https://earthquake.usgs.gov/fdsnws/event/1/query?" +
         "format=geojson&starttime="+ dateString +
         "&minmagnitude=2.5";
-    var emscUrl = "https://www.seismicportal.eu/fdsnws/event/1/query?limit=100&start=" + dateString + "&minmag=2.5";
+    var emscUrl = "https://www.seismicportal.eu/fdsnws/event/1/query?limit=1000&start=" + dateString + "&minmag=2.5";
 
     // Clear previous earthquakes
-    earthquakes.clearLayers();
+    usgsLayer.clearLayers();
+    emscLayer.clearLayers();
 
     Promise.all([
         fetch(queryUrl).then(res => res.json()),
@@ -107,8 +109,6 @@ function fetchAndDisplayEarthquakes(daysAgo) {
             .then(str => (new window.DOMParser()).parseFromString(str, "text/xml"))
     ]).then(function([usgsData, emscXml]) {
         var usgsFeatures = usgsData && usgsData.features ? usgsData.features : [];
-        console.log('USGS Query URL:', queryUrl);
-        console.log('USGS Raw Data:', usgsData);
         function emscXmlToGeoJson(xml) {
             var features = [];
             var events = xml.getElementsByTagName('event');
@@ -138,10 +138,29 @@ function fetchAndDisplayEarthquakes(daysAgo) {
             return features;
         }
         var emscFeatures = emscXml ? emscXmlToGeoJson(emscXml) : [];
-        var allFeatures = usgsFeatures.concat(emscFeatures);
-        console.log('EMSC features:', emscFeatures);
-        console.log('All features:', allFeatures);
-        createFeatures({ type: "FeatureCollection", features: allFeatures });
+
+        // Add USGS features to usgsLayer
+        L.geoJSON({ type: "FeatureCollection", features: usgsFeatures }, {
+            pointToLayer: function(feature, latlng){ return L.circleMarker(latlng); },
+            style: styleInfo,
+            onEachFeature: function(feature,layer){
+                var d = new Date(0);
+                d.setUTCMilliseconds(feature.properties.time);
+                layer.bindPopup(feature.properties.place + "<hr>" + d + "<hr>Magnitude: " + feature.properties.mag);
+            }
+        }).addTo(usgsLayer);
+
+        // Add EMSC features to emscLayer
+        L.geoJSON({ type: "FeatureCollection", features: emscFeatures }, {
+            pointToLayer: function(feature, latlng){ return L.circleMarker(latlng); },
+            style: styleInfo,
+            onEachFeature: function(feature,layer){
+                var d = new Date(0);
+                d.setUTCMilliseconds(feature.properties.time);
+                layer.bindPopup(feature.properties.place + "<hr>" + d + "<hr>Magnitude: " + feature.properties.mag);
+            }
+        }).addTo(emscLayer);
+
         // Update the title with the new date
         document.getElementById('eq-title').innerHTML = `<h1>Earthquake activity since ${dateString}</h1>`;
     }).catch(function(error) {
@@ -169,6 +188,9 @@ title.onAdd = function() {
       <option value="30">30</option>
     </select> days
   `;
+  // Ensure dropdown works on mobile:
+  L.DomEvent.disableClickPropagation(titleDiv);
+  L.DomEvent.disableScrollPropagation(titleDiv);
   return titleDiv;
 };
 
@@ -177,13 +199,14 @@ title.addTo(myMap);
 // Initial fetch
 fetchAndDisplayEarthquakes(10);
 
-// Listen for dropdown changes
+// Attach event listener after control is added
 setTimeout(function() {
   var select = document.getElementById('daysAgoSelect');
-  if (select) {
+  if (select && !select.dataset.listener) {
     select.addEventListener('change', function() {
       fetchAndDisplayEarthquakes(parseInt(this.value));
     });
+    select.dataset.listener = 'true';
   }
 }, 0);
 

@@ -48,30 +48,48 @@ var legend = L.control({
 legend.onAdd = function() {
     var newDiv = L.DomUtil.create("div", "info legend");
     newDiv.innerHTML = "";
-    newDiv.innerHTML += "<select name='tour_select' id='tour_select' onchange='dropdownChanged()'></select>";
+    newDiv.innerHTML += "<select name='tour_select' id='tour_select'></select>";
 
+    // Ensure dropdown works on mobile:
+    L.DomEvent.disableClickPropagation(newDiv);
+    L.DomEvent.disableScrollPropagation(newDiv);
+    
     return newDiv;
 }
 
 legend.addTo(myMap);
 
-var drop = document.getElementById("tour_select");
-
-d3.csv("Resources/tour_stops.csv", function(tour){
-    // console.log(tour)
-    tours = [];
-    for (var i=0; i< tour.length; i++){
-        if (tours.includes(tour[i].Cast)){}
-        else {tours.push(tour[i].Cast);}
+// Attach event listener after control is added
+setTimeout(function() {
+    var select = document.getElementById('tour_select');
+    if (select && !select.dataset.listener) {
+        select.addEventListener('change', function() {
+            dropdownChanged();
+        });
+        select.dataset.listener = 'true';
     }
-    for (var i = 0; i<tours.length; i++){
-        var opt = document.createElement("option");
-        opt.textContent = tours[i]
-        opt.value = tours[i]
-        drop.appendChild(opt);
-    }
+}, 0);
 
-})
+// Populate dropdown options after ensuring element exists
+setTimeout(function() {
+    var drop = document.getElementById("tour_select");
+    if (drop) {
+        d3.csv("Resources/tour_stops.csv", function(tour){
+            // console.log(tour)
+            tours = [];
+            for (var i=0; i< tour.length; i++){
+                if (tours.includes(tour[i].Cast)){}
+                else {tours.push(tour[i].Cast);}
+            }
+            for (var i = 0; i<tours.length; i++){
+                var opt = document.createElement("option");
+                opt.textContent = tours[i]
+                opt.value = tours[i]
+                drop.appendChild(opt);
+            }
+        });
+    }
+}, 100);
 
 var myIcon = L.icon({
     iconUrl: 'Resources/uwp.png',
