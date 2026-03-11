@@ -135,8 +135,8 @@ p {
     transform: scale(1.05);
 }
 
-/* Play Store link box */
-.play-store-box {
+/* Play Store link box – use a.play-store-box so deployed link styles don't override */
+a.play-store-box {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -145,17 +145,18 @@ p {
     min-height: 100px;
     padding: 24px;
     margin: 15px 0;
-    background: var(--card-bg);
+    background-color: var(--card-bg);
     border-radius: 20px;
     box-shadow: var(--shadow-light);
-    text-decoration: none;
+    text-decoration: none !important;
     color: var(--text-primary);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
 }
 
-.play-store-box::before {
+a.play-store-box::before {
     content: '';
     position: absolute;
     top: 0;
@@ -165,35 +166,41 @@ p {
     background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
     opacity: 0;
     transition: opacity 0.3s ease;
-    z-index: 1;
+    z-index: 0;
+    pointer-events: none;
 }
 
-.play-store-box:hover {
+a.play-store-box:hover,
+a.play-store-box:focus {
     transform: translateY(-4px);
     box-shadow: var(--shadow-heavy);
-    text-decoration: none;
-    color: white;
+    text-decoration: none !important;
+    color: white !important;
+    background-color: var(--primary-color);
 }
 
-.play-store-box:hover::before {
+a.play-store-box:hover::before,
+a.play-store-box:focus::before {
     opacity: 1;
 }
 
-.play-store-box .button-title {
+a.play-store-box .button-title {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     margin-bottom: 4px;
+    color: inherit;
 }
 
-.play-store-sub {
+a.play-store-box .play-store-sub {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     font-size: 0.95rem;
     color: var(--text-secondary);
     transition: color 0.3s ease;
 }
 
-.play-store-box:hover .play-store-sub {
+a.play-store-box:hover .play-store-sub,
+a.play-store-box:focus .play-store-sub {
     color: rgba(255, 255, 255, 0.9);
 }
 
