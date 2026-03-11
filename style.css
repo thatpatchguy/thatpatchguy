@@ -135,6 +135,68 @@ p {
     transform: scale(1.05);
 }
 
+/* Play Store link box */
+.play-store-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 100px;
+    padding: 24px;
+    margin: 15px 0;
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: var(--shadow-light);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.play-store-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.play-store-box:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-heavy);
+    text-decoration: none;
+    color: white;
+}
+
+.play-store-box:hover::before {
+    opacity: 1;
+}
+
+.play-store-box .button-title {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 4px;
+}
+
+.play-store-sub {
+    position: relative;
+    z-index: 2;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.play-store-box:hover .play-store-sub {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 /* Comparison page buttons – compact, clickable links */
 .comparison-btn {
     display: inline-block;
