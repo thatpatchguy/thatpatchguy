@@ -72,7 +72,7 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     text-decoration: none;
     color: var(--text-primary);
 }
@@ -111,23 +111,54 @@ p {
     margin-bottom: 15px;
     display: block;
     color: inherit;
+    flex-shrink: 0;
 }
 
-.buttonpic {
+/* Wrapper keeps image area consistent so all buttons align the same */
+.big_button .buttonpic {
     width: 100%;
     max-width: 200px;
-    height: auto;
+    height: 180px;
+    object-fit: cover;
+    object-position: center;
     border-radius: 12px;
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
     position: relative;
     z-index: 2;
     transition: transform 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
 }
 
 .big_button:hover .buttonpic {
     transform: scale(1.05);
+}
+
+/* Comparison page buttons – compact, clickable links */
+.comparison-btn {
+    display: inline-block;
+    padding: 14px 28px;
+    margin-top: 12px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-align: center;
+    text-decoration: none;
+    color: var(--dark-bg);
+    background: #ffffff;
+    border: 2px solid var(--primary-color);
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.comparison-btn:hover {
+    transform: translateY(-2px);
+    color: white;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border-color: var(--secondary-color);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    text-decoration: none;
 }
 
 /* Subheader styling */
