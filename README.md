@@ -1,3 +1,3 @@
 ### Hi there 👋
 
-My name is _Dylan Patch_ and I am an aspiring Data Analyst with a passion to use data to create more efficient systems that increase quality of life and environmental sustainability.
+My name is _Dylan Patch_, A Data Engineer with deep expertise in Looker, dbt, and Snowflake. 
