@@ -511,10 +511,6 @@ const DATA = {
    "label": "Three Bedroom Cabin",
    "color": "#d97a2b"
   },
-  "premium": {
-   "label": "Premium Unit",
-   "color": "#c9a227"
-  },
   "unknown": {
    "label": "Not Listed",
    "color": "#767676"
@@ -1140,33 +1136,12 @@ const DATA = {
   },
   "100": {
    "name": "100",
-   "cat": "premium",
-   "sleeps": "Sleeps 10\u201315",
-   "details": "7 Bedrooms, 3 Full Baths, Full Kitchen, Washer & Dryer, Coffee Maker \u2014 King, Queen, Master (Queen/2 Twin/Full), King, Queen/Twin, 2 Bunk Beds, Queen/Twin",
-   "images": [
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-additional-bedroom-bed.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-aerial-view-property.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-bathroom-sink-fixtures.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-bedroom-sleeping-area.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-bedroom-window-view.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-dining-room-table.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-entry-hallway-stairs.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-exterior-front-porch.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-family-room-seating.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-game-room-entertainment.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-guest-bedroom-bed.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-guest-suite-area.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-hallway-corridor.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-interior-living-space.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-interior-room-view.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-kitchen-island-appliances.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-laundry-room-appliances.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-living-room-fireplace.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-master-bath-tub.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-master-bedroom-bed.jpg",
-    "https://www.harmels.com/assets/images/cabins/100/cabin-100-office-workspace.jpg"
-   ],
+   "cat": "unknown",
+   "sleeps": "",
+   "details": "",
+   "images": [],
    "title": "Cabin #100",
+   "disabled": true,
    "x_pct": 87.646,
    "y_pct": 89.703
   },
@@ -1177,6 +1152,7 @@ const DATA = {
    "details": "",
    "images": [],
    "title": "Cabin #2",
+   "disabled": true,
    "x_pct": 59.814,
    "y_pct": 60.139
   }
@@ -1283,6 +1259,11 @@ function renderPins() {
     pin.style.background = DATA.cats[c.cat].color;
     pin.textContent = c.name;
     pin.title = c.title;
+    if (c.disabled) {
+      pin.style.cursor = 'default';
+      pinsEl.appendChild(pin);
+      return;
+    }
     pin.addEventListener('click', () => {
       openModal(c);
     });
@@ -1447,7 +1428,7 @@ const cabinSelector = document.getElementById('cabinSelector');
 const swapCabinsBtn = document.getElementById('swapCabinsBtn');
 
 function populateCabinSelector() {
-  const cabinNames = Object.keys(DATA.cabins).sort((a, b) => parseInt(a) - parseInt(b));
+  const cabinNames = Object.keys(DATA.cabins).filter(n => !DATA.cabins[n].disabled).sort((a, b) => parseInt(a) - parseInt(b));
   cabinSelector.innerHTML = '<option value="">Select cabin...</option>';
   cabinNames.forEach(name => {
     if (name !== currentModalCabin && name !== currentSecondModalCabin) {
@@ -1494,7 +1475,7 @@ compareBtn.onclick = () => {
     cabin2Section.style.display = 'block';
     cabin1Head.style.display = 'flex';
     if (!currentSecondModalCabin) {
-      const cabinNames = Object.keys(DATA.cabins).sort((a, b) => parseInt(a) - parseInt(b));
+      const cabinNames = Object.keys(DATA.cabins).filter(n => !DATA.cabins[n].disabled).sort((a, b) => parseInt(a) - parseInt(b));
       const firstAvailable = cabinNames.find(n => n !== currentModalCabin);
       if (firstAvailable) {
         openSecondCabin(DATA.cabins[firstAvailable]);
