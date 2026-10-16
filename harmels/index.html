@@ -1,0 +1,1544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harmels on the Taylor — Cabin Map</title>
+<style>
+  :root {
+    --bg: #12261c;
+    --panel: #16332570;
+    --ink: #f4f1e9;
+    --muted: #cfd8cf;
+    --accent: #e8c05a;
+    --border: #ffffff22;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  #layout { display: flex; height: 100vh; }
+  #app { display: flex; flex-direction: column; height: 100vh; flex: 1; min-width: 0; }
+
+  /* sidebar */
+  #sidebar {
+    width: 260px; flex: none; display: flex; flex-direction: column;
+    background: #0e1f16; border-right: 1px solid var(--border);
+    z-index: 30;
+  }
+  #sidebarHead { padding: 12px 14px 8px; border-bottom: 1px solid var(--border); }
+  #sidebarHead h2 { margin: 0 0 6px; font-size: 14px; font-weight: 700; }
+  #sidebarStats { font-size: 11.5px; color: var(--muted); margin-bottom: 8px; }
+  #personSearch {
+    width: 100%; padding: 6px 9px; border-radius: 6px; border: 1px solid var(--border);
+    background: #ffffff10; color: var(--ink); font-size: 12.5px;
+  }
+  #personSearch::placeholder { color: #ffffff66; }
+  #syncRow { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  #syncRow button {
+    flex: 1; background: #ffffff14; color: var(--ink); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 6px; font-size: 11px; cursor: pointer; white-space: nowrap;
+  }
+  #syncRow button:hover { background: #ffffff26; }
+  #sortRow button {
+    flex: 1; background: #ffffff14; color: var(--ink); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 6px; font-size: 11px; cursor: pointer; white-space: nowrap;
+  }
+  #sortRow button:hover { background: #ffffff26; }
+  #syncStatus { font-size: 10.5px; color: var(--muted); margin-top: 6px; line-height: 1.4; min-height: 14px; }
+
+  #assignHint {
+    display: none; padding: 8px 14px; font-size: 12px; background: var(--accent); color: #111;
+    font-weight: 700;
+  }
+  #assignHint.active { display: block; }
+  #assignHint button {
+    margin-left: 8px; background: #0003; border: none; color: #111; border-radius: 4px;
+    padding: 2px 7px; font-size: 11px; cursor: pointer; font-weight: 700;
+  }
+
+  #peopleList { flex: 1; overflow: auto; padding: 6px 8px; }
+  .person-row {
+    display: flex; align-items: center; gap: 8px; padding: 6px 6px; border-radius: 7px;
+    cursor: pointer; font-size: 13px;
+  }
+  .person-row:hover { background: #ffffff12; }
+  .person-row.selected { background: var(--accent); color: #111; }
+  .person-row .pname { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .slot {
+    flex: none; min-width: 30px; padding: 2px 7px; border-radius: 20px; font-size: 11px;
+    font-weight: 700; text-align: center; color: #fff; border: 1px solid #ffffff33;
+  }
+  .slot.empty {
+    background: transparent; border: 1px dashed #ffffff55; color: var(--muted); font-weight: 500;
+  }
+  .slot-x {
+    flex: none; background: transparent; border: none; color: inherit; opacity: .5;
+    cursor: pointer; font-size: 13px; padding: 0 2px; line-height: 1;
+  }
+  .slot-x:hover { opacity: 1; }
+  .person-row.selected .slot-x { color: #111; }
+
+  header {
+    padding: 10px 16px;
+    display: flex; align-items: center; gap: 14px;
+    background: #0e1f16;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    z-index: 20;
+  }
+  header h1 {
+    font-size: 16px; margin: 0; font-weight: 600; letter-spacing: .3px;
+    white-space: nowrap;
+  }
+  header h1 small { display:block; font-weight:400; color: var(--muted); font-size: 11px; }
+
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-left: auto; }
+  .legend .item { display: flex; align-items: center; gap: 5px; white-space:nowrap; }
+  .legend .dot { width: 11px; height: 11px; border-radius: 50%; display:inline-block; border: 1px solid #0006; }
+
+  .toolbar { display: flex; gap: 6px; align-items:center; }
+  .toolbar button {
+    background: #ffffff14; color: var(--ink); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 10px; font-size: 13px; cursor: pointer;
+  }
+  .toolbar button:hover { background: #ffffff26; }
+
+  #mapScroll {
+    flex: 1; overflow: auto; position: relative;
+    background:
+      radial-gradient(ellipse at center, #1c3a2a 0%, #0e1f16 100%);
+  }
+  #mapInner {
+    position: relative;
+    transform-origin: 0 0;
+    width: max-content;
+  }
+  #mapImg { display: block; max-width: none; user-select: none; -webkit-user-drag: none; }
+
+  .pin {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    color: #fff;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px #0009;
+    cursor: pointer;
+    transition: transform .12s ease;
+  }
+  .pin:hover { transform: translate(-50%,-50%) scale(1.28); z-index: 5; }
+  .pin.unknown { opacity: .55; }
+  .pin.occupied { box-shadow: 0 0 0 3px var(--accent), 0 1px 4px #0009; }
+  .pin-count {
+    position: absolute; top: -6px; right: -6px; background: var(--accent); color: #111;
+    font-size: 10px; font-weight: 800; border-radius: 50%; width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center; border: 1px solid #0006;
+  }
+  .pin-info {
+    position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%);
+    margin-bottom: 3px; background: rgba(0,0,0,.78); color: #fff;
+    font-size: 8.5px; font-weight: 700; line-height: 1.25;
+    padding: 2px 5px; border-radius: 5px; white-space: nowrap; text-align: center;
+    pointer-events: none; border: 1px solid #ffffff2e;
+  }
+  .pin-info-group {
+    bottom: auto; margin-bottom: 0;
+    transform: translate(-50%, calc(-100% - 15px));
+    z-index: 2;
+  }
+
+  #hint {
+    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+    background: #000a; color: #fff; padding: 6px 14px; border-radius: 20px;
+    font-size: 12px; pointer-events: none; transition: opacity .4s;
+  }
+
+  /* modal */
+  #overlay {
+    position: fixed; inset: 0; background: #000c; display: none;
+    align-items: center; justify-content: center; z-index: 100; padding: 20px;
+  }
+  #overlay.open { display: flex; }
+  #modal {
+    background: #17251c; border: 1px solid var(--border); border-radius: 12px;
+    max-width: 90vw; width: 100%; max-height: 92vh; overflow: auto;
+    box-shadow: 0 20px 60px #000a;
+  }
+
+  /* onboarding */
+  #onboardOverlay {
+    position: fixed; inset: 0; background: #000c; display: none;
+    align-items: center; justify-content: center; z-index: 200; padding: 20px;
+  }
+  #onboardOverlay.open { display: flex; }
+  #onboardModal {
+    background: #17251c; border: 1px solid var(--border); border-radius: 12px;
+    max-width: 420px; width: 100%; box-shadow: 0 20px 60px #000a;
+    padding: 22px 24px;
+  }
+  #onboardModal .onboardHead {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  #onboardModal .onboardStepLabel {
+    color: var(--muted); font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  #onboardModal h3 {
+    margin: 4px 0 10px; font-size: 18px;
+  }
+  #onboardModal p {
+    color: var(--muted); font-size: 13px; line-height: 1.5; margin: 0 0 14px;
+  }
+  #onboardModal a { color: var(--accent); }
+  #onboardModal .onboardActions {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  #onboardModal button {
+    border-radius: 6px; padding: 8px 14px; font-size: 13px; cursor: pointer; border: 1px solid var(--border);
+  }
+  #onboardModal button.primary { background: var(--accent); color: #111; border-color: var(--accent); font-weight: 700; }
+  #onboardModal button.secondary { background: #ffffff14; color: var(--ink); }
+  #onboardModal button.secondary:hover { background: #ffffff26; }
+  #onboardCloseBtn {
+    background: none; border: none; color: var(--muted); font-size: 16px; cursor: pointer; padding: 0 0 0 12px;
+  }
+  #modalContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  #modalContent.compare {
+    flex-direction: row;
+    gap: 0;
+  }
+  #compareDivider {
+    display: none;
+    flex-direction: column;
+    width: 160px;
+    flex: 0 0 160px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    background: #ffffff06;
+  }
+  #modalContent.compare #compareDivider {
+    display: flex;
+  }
+  .compare-selector {
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+  .compare-selector label {
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    text-align: center;
+  }
+  .compare-selector select {
+    width: 100%;
+    padding: 6px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: #ffffff10;
+    color: var(--ink);
+    font-size: 11px;
+  }
+  .compare-selector button {
+    background: #ffffff14;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    width: 100%;
+  }
+  .compare-selector button:hover { background: #ffffff26; }
+  .cabin-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  #modalContent.compare .cabin-section {
+    border: 1px solid var(--border);
+    border-radius: 0;
+    background: #ffffff04;
+  }
+  #modalContent.compare #cabin1Section {
+    border-right: none;
+    border-radius: 12px 0 0 12px;
+  }
+  #modalContent.compare #cabin2Section {
+    border-left: none;
+    border-radius: 0 12px 12px 0;
+  }
+  .cabin-section-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .cabin-section-head h2 {
+    margin: 0 0 4px;
+    font-size: 16px;
+  }
+  .cabin-section-head .badge {
+    margin-bottom: 0;
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+  .cabin-section-head .close-cabin {
+    background: #ffffff14; border: 1px solid var(--border); color: var(--ink);
+    border-radius: 50%; width: 28px; height: 28px; font-size: 14px; cursor: pointer; flex: none;
+  }
+  .cabin-section-head .close-cabin:hover { background: #ffffff2a; }
+  .cabin-section-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px;
+  }
+  #modalContent.compare .cabin-section-content {
+    padding: 12px 16px;
+  }
+  #modalHead {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    padding: 18px 20px 10px; gap: 10px;
+    position: sticky; top: 0; background: #17251c; border-bottom: 1px solid var(--border); z-index: 2;
+  }
+  #modalHead h2 { margin: 0 0 4px; font-size: 20px; }
+  .badge {
+    display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px;
+    color: #111; font-weight: 700; margin-bottom: 6px;
+  }
+  #modalMeta { color: var(--muted); font-size: 13.5px; margin-top: 4px; line-height: 1.5; }
+  #closeBtn {
+    background: #ffffff14; border: 1px solid var(--border); color: var(--ink);
+    border-radius: 50%; width: 34px; height: 34px; font-size: 16px; cursor: pointer; flex: none;
+  }
+  #closeBtn:hover { background: #ffffff2a; }
+
+  #gallery, #gallery2 {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px; padding: 16px 20px;
+  }
+  #gallery img, #gallery2 img {
+    width: 100%; height: 140px; object-fit: cover; border-radius: 8px; cursor: zoom-in;
+    border: 1px solid var(--border); background: #0002;
+  }
+  #modalFoot { padding: 6px 20px 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+  #modalFoot a {
+    color: #111; background: var(--accent); text-decoration: none; font-weight: 700;
+    padding: 9px 16px; border-radius: 8px; font-size: 13.5px;
+  }
+  #modalFoot a.secondary { background: #ffffff18; color: var(--ink); font-weight: 600; }
+  .empty-note { padding: 4px 20px 20px; color: var(--muted); font-size: 13.5px; line-height: 1.6; }
+
+  #roster { padding: 4px 20px 18px; }
+  #roster h3 {
+    font-size: 12.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted);
+    margin: 0 0 8px;
+  }
+  #rosterCount { font-weight: 400; text-transform: none; letter-spacing: 0; }
+  #rosterCount.over { color: #ff9d7a; }
+  .roster-empty { font-size: 13px; color: var(--muted); }
+  .roster-chip {
+    display: inline-flex; align-items: center; gap: 6px; background: #ffffff14;
+    border: 1px solid var(--border); border-radius: 20px; padding: 5px 6px 5px 12px;
+    font-size: 13px; margin: 0 6px 6px 0;
+  }
+  .roster-chip button {
+    background: #ffffff20; border: none; color: var(--ink); border-radius: 50%;
+    width: 18px; height: 18px; font-size: 11px; cursor: pointer; line-height: 1;
+  }
+  .roster-chip button:hover { background: #ffffff40; }
+
+  /* lightbox */
+  #lightbox {
+    position: fixed; inset: 0; background: #000e; display: none;
+    align-items: center; justify-content: center; z-index: 200; padding: 30px;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 100%; max-height: 100%; border-radius: 6px; }
+  #lightbox .nav {
+    position: absolute; top: 0; bottom: 0; width: 18%; display: flex; align-items: center;
+    justify-content: center; color: #fff; font-size: 34px; cursor: pointer; user-select: none;
+    opacity: .55; background: transparent;
+  }
+  #lightbox .nav:hover { opacity: 1; }
+  #lightbox .navL { left: 0; }
+  #lightbox .navR { right: 0; }
+  #lightbox .lbClose {
+    position: absolute; top: 16px; right: 20px; color: #fff; font-size: 26px; cursor: pointer;
+  }
+  #lightbox .lbCount {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+    color: #fff9; font-size: 12px;
+  }
+
+  @media (max-width: 640px) {
+    header h1 { font-size: 14px; }
+    .legend { font-size: 10.5px; gap: 7px; }
+    #sidebar { width: 44vw; min-width: 160px; }
+  }
+</style>
+</head>
+<body>
+<div id="layout">
+  <div id="app">
+    <header>
+      <h1>Harmels on the Taylor<small>Interactive resort map — click a cabin number for photos</small></h1>
+      <div class="toolbar">
+        <button id="zoomOut" title="Zoom out">−</button>
+        <button id="zoomReset" title="Reset zoom">Fit</button>
+        <button id="zoomIn" title="Zoom in">+</button>
+      </div>
+      <div class="legend" id="legend"></div>
+    </header>
+
+    <div id="mapScroll">
+      <div id="mapInner">
+        <img id="mapImg" src="harmels-resort-map-almont-colorado.webp" alt="Harmels on the Taylor resort map">
+        <div id="pins"></div>
+        <div id="cabinTooltip" style="display: none; position: absolute; background: rgba(0,0,0,0.9); color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 13px; z-index: 100; white-space: nowrap; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);">
+          <div style="font-weight: 700; margin-bottom: 4px;" id="tooltipTitle"></div>
+          <div id="tooltipGuests"></div>
+        </div>
+      </div>
+      <div id="hint">Scroll to pan · use +/− to zoom · click any numbered cabin</div>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div id="modal">
+    <div id="modalHead">
+      <div>
+        <span class="badge" id="modalCatBadge"></span>
+        <h2 id="modalTitle"></h2>
+        <div id="modalMeta"></div>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button id="compareBtn" title="Open another cabin to compare">Compare</button>
+        <button id="closeBtn">✕</button>
+      </div>
+    </div>
+    <div id="modalContent">
+      <div class="cabin-section" id="cabin1Section">
+        <div class="cabin-section-head" id="cabin1Head" style="display: none;">
+          <div>
+            <span class="badge" id="modalCatBadge"></span>
+            <h2 id="modalTitle"></h2>
+            <div id="modalMeta"></div>
+          </div>
+        </div>
+        <div class="cabin-section-content">
+          <div id="gallery"></div>
+          <div class="empty-note" id="emptyNote" style="display:none"></div>
+          <div id="modalFoot"></div>
+        </div>
+      </div>
+      <div id="compareDivider" style="display: none;">
+        <div class="compare-selector">
+          <label>Compare with:</label>
+          <select id="cabinSelector">
+            <option value="">Select cabin...</option>
+          </select>
+          <button id="swapCabinsBtn" title="Swap cabins">⇄</button>
+        </div>
+      </div>
+      <div class="cabin-section" id="cabin2Section" style="display: none;">
+        <div class="cabin-section-head">
+          <div>
+            <span class="badge" id="modalCatBadge2"></span>
+            <h2 id="modalTitle2"></h2>
+            <div id="modalMeta2"></div>
+          </div>
+          <button class="close-cabin" id="closeSecondCabin">✕</button>
+        </div>
+        <div class="cabin-section-content">
+          <div id="gallery2"></div>
+          <div class="empty-note" id="emptyNote2" style="display:none"></div>
+          <div id="modalFoot2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="lightbox">
+  <span class="lbClose" id="lbClose">✕</span>
+  <div class="nav navL" id="lbPrev">‹</div>
+  <img id="lbImg" src="" alt="">
+  <div class="nav navR" id="lbNext">›</div>
+  <div class="lbCount" id="lbCount"></div>
+</div>
+
+<script src="prices.js"></script>
+<script>
+
+const DATA = {
+ "cats": {
+  "studio": {
+   "label": "Studio Cabin",
+   "color": "#2fa88f"
+  },
+  "one": {
+   "label": "One Bedroom Cabin",
+   "color": "#3b7dd8"
+  },
+  "two": {
+   "label": "Two Bedroom Cabin",
+   "color": "#8054c9"
+  },
+  "three": {
+   "label": "Three Bedroom Cabin",
+   "color": "#d97a2b"
+  },
+  "premium": {
+   "label": "Premium Unit",
+   "color": "#c9a227"
+  },
+  "unknown": {
+   "label": "Not Listed",
+   "color": "#767676"
+  }
+ },
+ "cabins": {
+  "4": {
+   "name": "4",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Queen, Shower, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/4/cabin-4-bathroom-shower-toilet.jpg",
+    "https://www.harmels.com/assets/images/cabins/4/cabin-4-bedroom-front-door-view.jpg",
+    "https://www.harmels.com/assets/images/cabins/4/cabin-4-bedroom-leather-chairs.jpg",
+    "https://www.harmels.com/assets/images/cabins/4/cabin-4-exterior-red-roof-picnic.jpg",
+    "https://www.harmels.com/assets/images/cabins/4/cabin-4-exterior-side-view-blue-fence.jpg"
+   ],
+   "title": "Cabin #4",
+   "x_pct": 56.689,
+   "y_pct": 81.996
+  },
+  "6": {
+   "name": "6",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Queen, Shower, Full Kitchen, Mini Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/6/cabin-6-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/6/cabin-6-bedroom-living-room-combo.jpg",
+    "https://www.harmels.com/assets/images/cabins/6/cabin-6-bedroom-sofa-windows.jpg",
+    "https://www.harmels.com/assets/images/cabins/6/cabin-6-exterior-deck-door-view.jpg",
+    "https://www.harmels.com/assets/images/cabins/6/cabin-6-exterior-red-picnic-tables.jpg"
+   ],
+   "title": "Cabin #6",
+   "x_pct": 49.658,
+   "y_pct": 76.437
+  },
+  "11": {
+   "name": "11",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Queen, Shower, Full Kitchen, Mini Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/11/cabin-11-bathroom-window-fixtures.jpg",
+    "https://www.harmels.com/assets/images/cabins/11/cabin-11-bedroom-beds-windows.jpg",
+    "https://www.harmels.com/assets/images/cabins/11/cabin-11-exterior-log-cabin-forest.jpg",
+    "https://www.harmels.com/assets/images/cabins/11/cabin-11-interior-living-kitchen.jpg"
+   ],
+   "title": "Cabin #11",
+   "x_pct": 1.074,
+   "y_pct": 53.253
+  },
+  "20": {
+   "name": "20",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20134",
+   "details": "2 Queens, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bathroom-vanity-shower.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-double-beds-tv.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-queen-bed-window.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-exterior-covered-porch.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-patio-seating-entry.jpg"
+   ],
+   "title": "Cabin #20 \u2014 Fishin' Post Lodge",
+   "x_pct": 40.674,
+   "y_pct": 85.597
+  },
+  "21": {
+   "name": "21",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20134",
+   "details": "2 Queens, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bathroom-vanity-shower.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-double-beds-tv.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-queen-bed-window.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-exterior-covered-porch.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-patio-seating-entry.jpg"
+   ],
+   "title": "Cabin #21 \u2014 Fishin' Post Lodge",
+   "x_pct": 38.867,
+   "y_pct": 85.597
+  },
+  "22": {
+   "name": "22",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20134",
+   "details": "2 Queens, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bathroom-vanity-shower.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-double-beds-tv.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-queen-bed-window.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-exterior-covered-porch.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-patio-seating-entry.jpg"
+   ],
+   "title": "Cabin #22 \u2014 Fishin' Post Lodge",
+   "x_pct": 37.012,
+   "y_pct": 85.597
+  },
+  "23": {
+   "name": "23",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20134",
+   "details": "2 Queens, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bathroom-vanity-shower.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-double-beds-tv.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-queen-bed-window.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-exterior-covered-porch.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-patio-seating-entry.jpg"
+   ],
+   "title": "Cabin #23 \u2014 Fishin' Post Lodge",
+   "x_pct": 35.107,
+   "y_pct": 85.597
+  },
+  "24": {
+   "name": "24",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20134",
+   "details": "2 Queens, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bathroom-vanity-shower.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-double-beds-tv.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-queen-bed-window.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-exterior-covered-porch.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-patio-seating-entry.jpg"
+   ],
+   "title": "Cabin #24 \u2014 Fishin' Post Lodge",
+   "x_pct": 33.301,
+   "y_pct": 85.534
+  },
+  "25": {
+   "name": "25",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20134",
+   "details": "2 Queens, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bathroom-vanity-shower.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-double-beds-tv.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-queen-bed-window.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-exterior-covered-porch.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-patio-seating-entry.jpg"
+   ],
+   "title": "Cabin #25 \u2014 Fishin' Post Lodge",
+   "x_pct": 31.396,
+   "y_pct": 85.597
+  },
+  "26": {
+   "name": "26",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20134",
+   "details": "2 Queens, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bathroom-vanity-shower.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-double-beds-tv.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-queen-bed-window.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-exterior-covered-porch.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-patio-seating-entry.jpg"
+   ],
+   "title": "Cabin #26 \u2014 Fishin' Post Lodge",
+   "x_pct": 29.541,
+   "y_pct": 85.597
+  },
+  "27": {
+   "name": "27",
+   "cat": "studio",
+   "sleeps": "Sleeps 2\u20134",
+   "details": "2 Queens, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bathroom-vanity-shower.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-double-beds-tv.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-bedroom-queen-bed-window.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-exterior-covered-porch.jpg",
+    "https://www.harmels.com/assets/images/cabins/fishing-post-20-27/fishing-post-lodge-patio-seating-entry.jpg"
+   ],
+   "title": "Cabin #27 \u2014 Fishin' Post Lodge",
+   "x_pct": 27.637,
+   "y_pct": 85.597
+  },
+  "3": {
+   "name": "3",
+   "cat": "one",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Full & 1 Twin, Shower, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/3/cabin-3-bedroom-hallway-view.jpg",
+    "https://www.harmels.com/assets/images/cabins/3/cabin-3-bedroom-window-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/3/cabin-3-exterior.jpg",
+    "https://www.harmels.com/assets/images/cabins/3/cabin-3-interior-living-space.jpg",
+    "https://www.harmels.com/assets/images/cabins/3/cabin-3-living-room.jpg"
+   ],
+   "title": "Cabin #3",
+   "x_pct": 58.594,
+   "y_pct": 70.12
+  },
+  "5": {
+   "name": "5",
+   "cat": "one",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Queen & 1 Twin, Shower, Full Kitchen, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/5/cabin-5-bedroom-closet-doors.jpg",
+    "https://www.harmels.com/assets/images/cabins/5/cabin-5-exterior-red-deck-grill.jpg",
+    "https://www.harmels.com/assets/images/cabins/5/cabin-5-exterior-side-deck-pink-chairs.jpg",
+    "https://www.harmels.com/assets/images/cabins/5/cabin-5-interior-kitchen-dining.jpg",
+    "https://www.harmels.com/assets/images/cabins/5/cabin-5-kitchen-sink-appliances.jpg"
+   ],
+   "title": "Cabin #5",
+   "x_pct": 47.191,
+   "y_pct": 68.53
+  },
+  "8": {
+   "name": "8",
+   "cat": "one",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Full, Shower, Full Kitchen, Jr. Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/8/cabin-8-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/8/cabin-8-bedroom-plaid-quilts.jpg",
+    "https://www.harmels.com/assets/images/cabins/8/cabin-8-dining-kitchen-appliances.jpg",
+    "https://www.harmels.com/assets/images/cabins/8/cabin-8-exterior-black-red-roof.jpg",
+    "https://www.harmels.com/assets/images/cabins/8/cabin-8-interior-living-kitchen.jpg"
+   ],
+   "title": "Cabin #8",
+   "x_pct": 30.078,
+   "y_pct": 57.107
+  },
+  "31": {
+   "name": "31",
+   "cat": "one",
+   "sleeps": "Sleeps 4\u20135",
+   "details": "1 Queen & 1 Queen, Full Bath, Full Kitchen, Jr. Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/31/cabin-31-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/31/cabin-31-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/31/cabin-31-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/31/cabin-31-exterior-cabin-forest.jpg",
+    "https://www.harmels.com/assets/images/cabins/31/cabin-31-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/31/cabin-31-kitchen-dining-appliances.jpg"
+   ],
+   "title": "Cabin #31",
+   "x_pct": 22.559,
+   "y_pct": 51.864
+  },
+  "34": {
+   "name": "34",
+   "cat": "one",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "2 Queens, Full Bath, Full Kitchen, Mini Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-1.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-2.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-3.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-4.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-5.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-6.jpg"
+   ],
+   "title": "Cabin #34",
+   "x_pct": 54.59,
+   "y_pct": 16.425
+  },
+  "35": {
+   "name": "35",
+   "cat": "one",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "2 Queens, Full Bath, Full Kitchen, Mini Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-1.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-2.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-3.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-4.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-5.jpg",
+    "https://www.harmels.com/assets/images/cabins/34-35/cabin-34-and-35-6.jpg"
+   ],
+   "title": "Cabin #35",
+   "x_pct": 54.443,
+   "y_pct": 19.709
+  },
+  "36": {
+   "name": "36",
+   "cat": "one",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Queen, Full Bath, Full Kitchen, Mini Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-bathroom-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-bedroom-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-exterior-unit.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-interior-living.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-kitchen-dining.jpg"
+   ],
+   "title": "Cabin #36 \u2014 4-Plex",
+   "x_pct": 42.725,
+   "y_pct": 37.524
+  },
+  "37": {
+   "name": "37",
+   "cat": "one",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Queen, Full Bath, Full Kitchen, Mini Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-bathroom-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-bedroom-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-exterior-unit.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-interior-living.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-kitchen-dining.jpg"
+   ],
+   "title": "Cabin #37 \u2014 4-Plex",
+   "x_pct": 44.482,
+   "y_pct": 37.524
+  },
+  "38": {
+   "name": "38",
+   "cat": "one",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Queen, Full Bath, Full Kitchen, Mini Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-bathroom-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-bedroom-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-exterior-unit.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-interior-living.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-kitchen-dining.jpg"
+   ],
+   "title": "Cabin #38 \u2014 4-Plex",
+   "x_pct": 42.725,
+   "y_pct": 36.134
+  },
+  "39": {
+   "name": "39",
+   "cat": "one",
+   "sleeps": "Sleeps 2\u20133",
+   "details": "1 Queen, Full Bath, Full Kitchen, Mini Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-bathroom-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-bedroom-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-exterior-unit.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-interior-living.jpg",
+    "https://www.harmels.com/assets/images/cabins/4-plex-36-39/cabin-4-plex-kitchen-dining.jpg"
+   ],
+   "title": "Cabin #39 \u2014 4-Plex",
+   "x_pct": 44.482,
+   "y_pct": 36.134
+  },
+  "7": {
+   "name": "7",
+   "cat": "two",
+   "sleeps": "Sleeps 5\u20136",
+   "details": "1 Twin & 1 Queen / 2 Queens, Shower, Full Kitchen, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/7/cabin-7-aerial-view-deck-forest.jpg",
+    "https://www.harmels.com/assets/images/cabins/7/cabin-7-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/7/cabin-7-bedroom-multi-bed-layout.jpg",
+    "https://www.harmels.com/assets/images/cabins/7/cabin-7-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/7/cabin-7-exterior-red-roof-picnic.jpg",
+    "https://www.harmels.com/assets/images/cabins/7/cabin-7-kitchen-dining-stove.jpg"
+   ],
+   "title": "Cabin #7",
+   "x_pct": 40.674,
+   "y_pct": 58.56
+  },
+  "9": {
+   "name": "9",
+   "cat": "two",
+   "sleeps": "Sleeps 5\u20136",
+   "details": "1 Queen / 2 Queens, Shower, Full Kitchen, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/9/cabin-9-bedroom-multi-bed-layout.jpg",
+    "https://www.harmels.com/assets/images/cabins/9/cabin-9-bedroom-plaid-quilt-window.jpg",
+    "https://www.harmels.com/assets/images/cabins/9/cabin-9-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/9/cabin-9-interior-kitchen-sofa.jpg",
+    "https://www.harmels.com/assets/images/cabins/9/cabin-9-living-room-sofa-tv.jpg"
+   ],
+   "title": "Cabin #9",
+   "x_pct": 18.506,
+   "y_pct": 57.17
+  },
+  "10": {
+   "name": "10",
+   "cat": "two",
+   "sleeps": "Sleeps 4\u20135",
+   "details": "1 Queen / 2 Twins, Shower, Full Kitchen, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/10/cabin-10-bedroom-beds-windows.jpg",
+    "https://www.harmels.com/assets/images/cabins/10/cabin-10-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/10/cabin-10-bedroom-window-bed.jpg",
+    "https://www.harmels.com/assets/images/cabins/10/cabin-10-kitchen-dining-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/10/cabin-10-living-room-sofa-windows.jpg"
+   ],
+   "title": "Cabin #10",
+   "x_pct": 7.471,
+   "y_pct": 51.485
+  },
+  "13": {
+   "name": "13",
+   "cat": "two",
+   "sleeps": "Sleeps 5\u20136",
+   "details": "1 Queen / 2 Queens, Shower, Full Kitchen, Jr. Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/13/cabin-13-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/13/cabin-13-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/13/cabin-13-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/13/cabin-13-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/13/cabin-13-exterior-deck-forest.jpg",
+    "https://www.harmels.com/assets/images/cabins/13/cabin-13-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/13/cabin-13-kitchen-dining-stove.jpg"
+   ],
+   "title": "Cabin #13",
+   "x_pct": 54.395,
+   "y_pct": 41.63
+  },
+  "14": {
+   "name": "14",
+   "cat": "two",
+   "sleeps": "Sleeps 5\u20136",
+   "details": "2 Queens / 1 Queen, Shower, Full Kitchen, Coffee Maker, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/14/cabin-14-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/14/cabin-14-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/14/cabin-14-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/14/cabin-14-exterior-cabin-forest.jpg",
+    "https://www.harmels.com/assets/images/cabins/14/cabin-14-interior-living-kitchen.jpg"
+   ],
+   "title": "Cabin #14",
+   "x_pct": 49.609,
+   "y_pct": 39.798
+  },
+  "16": {
+   "name": "16",
+   "cat": "two",
+   "sleeps": "Sleeps 4\u20135",
+   "details": "1 Queen / 1 Queen, Full Bath, Full Kitchen, Jr. Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/16/cabin-16-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/16/cabin-16-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/16/cabin-16-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/16/cabin-16-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/16/cabin-16-exterior-deck-mountain.jpg",
+    "https://www.harmels.com/assets/images/cabins/16/cabin-16-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/16/cabin-16-kitchen-dining-appliances.jpg"
+   ],
+   "title": "Cabin #16",
+   "x_pct": 16.26,
+   "y_pct": 37.461
+  },
+  "18": {
+   "name": "18",
+   "cat": "two",
+   "sleeps": "Sleeps 5\u20136",
+   "details": "1 Queen / 2 Queens, Shower, Full Kitchen, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/18/cabin-18-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/18/cabin-18-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/18/cabin-18-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/18/cabin-18-exterior-cabin-forest.jpg",
+    "https://www.harmels.com/assets/images/cabins/18/cabin-18-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/18/cabin-18-kitchen-dining-appliances.jpg"
+   ],
+   "title": "Cabin #18",
+   "x_pct": 37.109,
+   "y_pct": 39.608
+  },
+  "19": {
+   "name": "19",
+   "cat": "two",
+   "sleeps": "Sleeps 5\u20136",
+   "details": "1 Queen / 1 Queen & 1 Twin, Shower, Full Kitchen, Jr. Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/19/cabin-19-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/19/cabin-19-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/19/cabin-19-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/19/cabin-19-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/19/cabin-19-exterior-cabin-deck.jpg",
+    "https://www.harmels.com/assets/images/cabins/19/cabin-19-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/19/cabin-19-kitchen-dining-stove.jpg"
+   ],
+   "title": "Cabin #19",
+   "x_pct": 42.162,
+   "y_pct": 25.005
+  },
+  "28": {
+   "name": "28",
+   "cat": "two",
+   "sleeps": "Sleeps 4\u20135",
+   "details": "1 Queen / 2 Twins, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/28/cabin-28-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/28/cabin-28-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/28/cabin-28-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/28/cabin-28-exterior-cabin-forest.jpg",
+    "https://www.harmels.com/assets/images/cabins/28/cabin-28-interior-living-kitchen.jpg"
+   ],
+   "title": "Cabin #28",
+   "x_pct": 11.23,
+   "y_pct": 50.537
+  },
+  "29": {
+   "name": "29",
+   "cat": "two",
+   "sleeps": "Sleeps 4\u20135",
+   "details": "1 Queen / 2 Twins, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/29/cabin-29-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/29/cabin-29-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/29/cabin-29-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/29/cabin-29-exterior-cabin-forest.jpg",
+    "https://www.harmels.com/assets/images/cabins/29/cabin-29-interior-living-kitchen.jpg"
+   ],
+   "title": "Cabin #29",
+   "x_pct": 13.867,
+   "y_pct": 50.221
+  },
+  "30": {
+   "name": "30",
+   "cat": "two",
+   "sleeps": "Sleeps 4\u20135",
+   "details": "1 Queen / 2 Twins, Full Bath, Jr. Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/30/cabin-30-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/30/cabin-30-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/30/cabin-30-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/30/cabin-30-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/30/cabin-30-exterior-cabin-deck.jpg",
+    "https://www.harmels.com/assets/images/cabins/30/cabin-30-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/30/cabin-30-kitchen-dining-stove.jpg"
+   ],
+   "title": "Cabin #30",
+   "x_pct": 26.514,
+   "y_pct": 52.179
+  },
+  "32": {
+   "name": "32",
+   "cat": "two",
+   "sleeps": "Sleeps 4\u20135",
+   "details": "1 Queen / 1 Queen, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/32/cabin-32-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/32/cabin-32-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/32/cabin-32-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/32/cabin-32-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/32/cabin-32-exterior-cabin-deck.jpg",
+    "https://www.harmels.com/assets/images/cabins/32/cabin-32-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/32/cabin-32-kitchen-dining-stove.jpg"
+   ],
+   "title": "Cabin #32",
+   "x_pct": 40.283,
+   "y_pct": 16.677
+  },
+  "33": {
+   "name": "33",
+   "cat": "two",
+   "sleeps": "Sleeps 4\u20135",
+   "details": "1 Queen / 1 Queen, Full Bath, Mini Fridge, Keurig, Microwave",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/33/cabin-33-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/33/cabin-33-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/33/cabin-33-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/33/cabin-33-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/33/cabin-33-exterior-cabin-deck.jpg",
+    "https://www.harmels.com/assets/images/cabins/33/cabin-33-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/33/cabin-33-kitchen-dining-stove.jpg"
+   ],
+   "title": "Cabin #33",
+   "x_pct": 48.779,
+   "y_pct": 13.14
+  },
+  "12": {
+   "name": "12",
+   "cat": "three",
+   "sleeps": "Sleeps 8\u20139",
+   "details": "1 Queen / 1 Queen / 2 Queens & 1 Twin, Shower, Full Kitchen, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/12/cabin-12-bathroom-sink-fixtures.jpg",
+    "https://www.harmels.com/assets/images/cabins/12/cabin-12-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/12/cabin-12-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/12/cabin-12-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/12/cabin-12-exterior-log-cabin.jpg",
+    "https://www.harmels.com/assets/images/cabins/12/cabin-12-interior-living-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/12/cabin-12-kitchen-dining-appliances.jpg"
+   ],
+   "title": "Cabin #12",
+   "x_pct": 35.961,
+   "y_pct": 31.133
+  },
+  "15": {
+   "name": "15",
+   "cat": "three",
+   "sleeps": "Sleeps 5\u20136",
+   "details": "1 Queen / 1 Queen / 1 Queen, Full Bath, Full Kitchen, Jr. Fridge, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/15/cabin-15-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/15/cabin-15-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/15/cabin-15-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/15/cabin-15-exterior-deck-forest.jpg",
+    "https://www.harmels.com/assets/images/cabins/15/cabin-15-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/15/cabin-15-kitchen-dining-appliances.jpg"
+   ],
+   "title": "Cabin #15",
+   "x_pct": 25.586,
+   "y_pct": 31.522
+  },
+  "17": {
+   "name": "17",
+   "cat": "three",
+   "sleeps": "Sleeps 8\u20139",
+   "details": "1 Queen / 1 Queen & 1 Twin / 1 Queen & 1 Twin, 1 Full Bath & 1 Shower, Full Kitchen, Coffee Maker",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-bathroom-window-sink.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-bedroom-double-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-bedroom-multi-bed.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-bedroom-twin-beds.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-exterior-cabin-red-roof.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-interior-detail-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-interior-living-kitchen.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-kitchen-dining-stove.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-living-room-view.jpg",
+    "https://www.harmels.com/assets/images/cabins/17/cabin-17-outdoor-area.jpg"
+   ],
+   "title": "Cabin #17",
+   "x_pct": 6.934,
+   "y_pct": 36.829
+  },
+  "100": {
+   "name": "100",
+   "cat": "premium",
+   "sleeps": "Sleeps 10\u201315",
+   "details": "7 Bedrooms, 3 Full Baths, Full Kitchen, Washer & Dryer, Coffee Maker \u2014 King, Queen, Master (Queen/2 Twin/Full), King, Queen/Twin, 2 Bunk Beds, Queen/Twin",
+   "images": [
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-additional-bedroom-bed.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-aerial-view-property.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-bathroom-sink-fixtures.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-bedroom-sleeping-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-bedroom-window-view.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-dining-room-table.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-entry-hallway-stairs.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-exterior-front-porch.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-family-room-seating.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-game-room-entertainment.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-guest-bedroom-bed.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-guest-suite-area.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-hallway-corridor.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-interior-living-space.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-interior-room-view.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-kitchen-island-appliances.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-laundry-room-appliances.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-living-room-fireplace.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-master-bath-tub.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-master-bedroom-bed.jpg",
+    "https://www.harmels.com/assets/images/cabins/100/cabin-100-office-workspace.jpg"
+   ],
+   "title": "Cabin #100",
+   "x_pct": 87.646,
+   "y_pct": 89.703
+  },
+  "2": {
+   "name": "2",
+   "cat": "unknown",
+   "sleeps": "",
+   "details": "",
+   "images": [],
+   "title": "Cabin #2",
+   "x_pct": 59.814,
+   "y_pct": 60.139
+  }
+ },
+ "imgW": 2048,
+ "imgH": 1583
+};
+
+
+function cabinBadgeColor(cabinName) {
+  const c = DATA.cabins[cabinName];
+  return c ? DATA.cats[c.cat].color : '#767676';
+}
+function parseCapacity(sleeps) {
+  if (!sleeps) return null;
+  const nums = sleeps.match(/\d+/g);
+  return nums ? Math.max(...nums.map(Number)) : null;
+}
+function parseCapacityRange(sleeps) {
+  if (!sleeps) return null;
+  const nums = sleeps.match(/\d+/g);
+  if (!nums) return null;
+  const vals = nums.map(Number);
+  return { min: Math.min(...vals), max: Math.max(...vals) };
+}
+function capacityLabel(cabinData) {
+  const cap = parseCapacityRange(cabinData.sleeps);
+  if (!cap) return null;
+  return cap.min === cap.max ? `${cap.min} ppl` : `${cap.min}–${cap.max} ppl`;
+}
+function priceRangeLabel(cabinData) {
+  const price = CABIN_PRICES[cabinData.name];
+  if (!price) return null;
+  const priceNum = parseFloat(price.replace('$', '').replace(',', ''));
+  if (!priceNum) return null;
+  const cap = parseCapacityRange(cabinData.sleeps);
+  if (!cap) return null;
+  const low = Math.round(priceNum / cap.max);
+  const high = Math.round(priceNum / cap.min);
+  return low === high ? `$${low}pp` : `$${low}–${high}pp`;
+}
+
+const pinsEl = document.getElementById('pins');
+const mapImg = document.getElementById('mapImg');
+const mapInner = document.getElementById('mapInner');
+const mapScroll = document.getElementById('mapScroll');
+const legendEl = document.getElementById('legend');
+const hint = document.getElementById('hint');
+
+// legend
+Object.values(DATA.cats).forEach(c => {
+  const d = document.createElement('div');
+  d.className = 'item';
+  d.innerHTML = `<span class="dot" style="background:${c.color}"></span>${c.label}`;
+  legendEl.appendChild(d);
+});
+
+let tooltipPin = null;
+
+function hideTooltipIfOutside(x, y) {
+  const tooltip = document.getElementById('cabinTooltip');
+  if (tooltip.style.display === 'none') return;
+  const tRect = tooltip.getBoundingClientRect();
+  const pRect = tooltipPin ? tooltipPin.getBoundingClientRect() : null;
+  const inTooltip = x >= tRect.left && x <= tRect.right && y >= tRect.top && y <= tRect.bottom;
+  const inPin = pRect && x >= pRect.left && x <= pRect.right && y >= pRect.top && y <= pRect.bottom;
+  if (!inTooltip && !inPin) {
+    tooltip.style.display = 'none';
+    tooltipPin = null;
+  }
+}
+mapScroll.addEventListener('mousemove', (e) => hideTooltipIfOutside(e.clientX, e.clientY));
+
+const PIN_GROUPS = [
+  ['36', '37', '38', '39'],
+  ['20', '21', '22', '23', '24', '25', '26', '27']
+];
+const pinGroupOf = {};
+PIN_GROUPS.forEach((members, i) => members.forEach(name => { pinGroupOf[name] = i; }));
+
+function renderGroupLabel(members) {
+  const cabins = members.map(name => DATA.cabins[name]).filter(Boolean);
+  if (!cabins.length) return null;
+  const capLbl = capacityLabel(cabins[0]);
+  const priceLbl = priceRangeLabel(cabins[0]);
+  if (!capLbl && !priceLbl) return null;
+  const avgX = cabins.reduce((s, c) => s + c.x_pct, 0) / cabins.length;
+  const minY = Math.min(...cabins.map(c => c.y_pct));
+  const label = document.createElement('div');
+  label.className = 'pin-info pin-info-group';
+  label.style.left = avgX + '%';
+  label.style.top = minY + '%';
+  label.innerHTML = [capLbl, priceLbl].filter(Boolean).join('<br>');
+  return label;
+}
+
+function renderPins() {
+  pinsEl.innerHTML = '';
+  Object.values(DATA.cabins).forEach(c => {
+    const pin = document.createElement('div');
+    pin.className = 'pin' + (c.cat === 'unknown' ? ' unknown' : '') + '';
+    pin.style.left = c.x_pct + '%';
+    pin.style.top = c.y_pct + '%';
+    pin.style.background = DATA.cats[c.cat].color;
+    pin.textContent = c.name;
+    pin.title = c.title;
+    pin.addEventListener('click', () => {
+      openModal(c);
+    });
+    if (pinGroupOf[c.name] === undefined) {
+      const capLbl = capacityLabel(c);
+      const priceLbl = priceRangeLabel(c);
+      if (capLbl || priceLbl) {
+        const info = document.createElement('div');
+        info.className = 'pin-info';
+        info.innerHTML = [capLbl, priceLbl].filter(Boolean).join('<br>');
+        pin.appendChild(info);
+      }
+    }
+    pin.addEventListener('mouseenter', (e) => {
+      tooltipPin = pin;
+      const tooltip = document.getElementById('cabinTooltip');
+      const titleEl = document.getElementById('tooltipTitle');
+      const guestsEl = document.getElementById('tooltipGuests');
+      titleEl.textContent = c.title;
+      guestsEl.textContent = c.sleeps || '';
+
+      const pinX = (c.x_pct / 100) * DATA.imgW * scale;
+      const pinY = (c.y_pct / 100) * DATA.imgH * scale;
+
+      tooltip.style.left = (mapScroll.scrollLeft + pinX) + 'px';
+      tooltip.style.top = (mapScroll.scrollTop + pinY - 45) + 'px';
+      tooltip.style.transform = 'translateX(-50%)';
+      tooltip.style.display = 'block';
+    });
+    pin.addEventListener('mouseleave', (e) => {
+      hideTooltipIfOutside(e.clientX, e.clientY);
+    });
+    pinsEl.appendChild(pin);
+  });
+  PIN_GROUPS.forEach(members => {
+    const label = renderGroupLabel(members);
+    if (label) pinsEl.appendChild(label);
+  });
+}
+
+
+// zoom / pan
+let scale = 1;
+function applyScale() {
+  mapInner.style.transform = `scale(${scale})`;
+}
+function fitToScreen() {
+  scale = Math.min(mapScroll.clientWidth / DATA.imgW, 1);
+  applyScale();
+  mapScroll.scrollLeft = 0;
+  mapScroll.scrollTop = 0;
+}
+document.getElementById('zoomIn').onclick = () => { scale = Math.min(scale * 1.25, 3); applyScale(); };
+document.getElementById('zoomOut').onclick = () => { scale = Math.max(scale / 1.25, 0.15); applyScale(); };
+document.getElementById('zoomReset').onclick = fitToScreen;
+
+mapImg.addEventListener('load', () => {
+  mapInner.style.width = DATA.imgW + 'px';
+  mapInner.style.height = DATA.imgH + 'px';
+  fitToScreen();
+  renderPins();
+  setTimeout(() => hint.style.opacity = '0', 3500);
+});
+
+// modal
+const overlay = document.getElementById('overlay');
+const modalContent = document.getElementById('modalContent');
+const modalTitle = document.getElementById('modalTitle');
+const modalMeta = document.getElementById('modalMeta');
+const modalCatBadge = document.getElementById('modalCatBadge');
+const gallery = document.getElementById('gallery');
+const emptyNote = document.getElementById('emptyNote');
+const modalFoot = document.getElementById('modalFoot');
+const compareBtn = document.getElementById('compareBtn');
+
+const modalTitle2 = document.getElementById('modalTitle2');
+const modalMeta2 = document.getElementById('modalMeta2');
+const modalCatBadge2 = document.getElementById('modalCatBadge2');
+const gallery2 = document.getElementById('gallery2');
+const emptyNote2 = document.getElementById('emptyNote2');
+const modalFoot2 = document.getElementById('modalFoot2');
+const cabin2Section = document.getElementById('cabin2Section');
+const closeSecondBtn = document.getElementById('closeSecondCabin');
+
+let currentImages = [];
+
+function populateModalSection(cabinData, isSecond = false) {
+  const prefix = isSecond ? '2' : '';
+  const titleEl = isSecond ? modalTitle2 : modalTitle;
+  const metaEl = isSecond ? modalMeta2 : modalMeta;
+  const badgeEl = isSecond ? modalCatBadge2 : modalCatBadge;
+  const galleryEl = isSecond ? gallery2 : gallery;
+  const emptyNoteEl = isSecond ? emptyNote2 : emptyNote;
+  const modalFootEl = isSecond ? modalFoot2 : modalFoot;
+
+  titleEl.textContent = cabinData.title;
+  const cat = DATA.cats[cabinData.cat];
+  badgeEl.textContent = cat.label;
+  badgeEl.style.background = cat.color;
+  const price = CABIN_PRICES[cabinData.name];
+  const metaParts = [cabinData.sleeps, cabinData.details];
+  if (price) {
+    const priceStr = `from ${price}/night`;
+    metaParts.push(priceStr);
+  }
+  metaEl.textContent = metaParts.filter(Boolean).join(' · ');
+
+  currentImages = cabinData.images;
+  galleryEl.innerHTML = '';
+  if (cabinData.images.length) {
+    emptyNoteEl.style.display = 'none';
+    cabinData.images.forEach((src, i) => {
+      const img = document.createElement('img');
+      img.src = src;
+      img.loading = 'lazy';
+      img.addEventListener('click', () => openLightbox(i));
+      galleryEl.appendChild(img);
+    });
+  } else {
+    emptyNoteEl.style.display = 'block';
+    emptyNoteEl.textContent = `Cabin #${cabinData.name} isn't listed with photos on harmels.com/stay — it may not be a bookable rental unit. Call the office at (970) 641-1740 to ask, or browse all listed cabins on the site.`;
+  }
+
+  modalFootEl.innerHTML = `
+    <a href="https://www.harmels.com/stay" target="_blank" rel="noopener">View on harmels.com/stay ↗</a>
+    <a class="secondary" href="https://www.campspot.com/book/harmels" target="_blank" rel="noopener">Book a stay ↗</a>
+  `;
+}
+
+function openModal(c) {
+  currentModalCabin = c.name;
+  currentSecondModalCabin = null;
+  cabin2Section.style.display = 'none';
+  modalContent.classList.remove('compare');
+
+  populateModalSection(c, false);
+
+  overlay.classList.add('open');
+}
+
+function openSecondCabin(c) {
+  currentSecondModalCabin = c.name;
+  cabin2Section.style.display = 'block';
+  modalContent.classList.add('compare');
+
+  populateModalSection(c, true);
+}
+
+document.getElementById('closeBtn').onclick = () => {
+  currentSecondModalCabin = null;
+  cabin2Section.style.display = 'none';
+  modalContent.classList.remove('compare');
+  overlay.classList.remove('open');
+};
+
+closeSecondBtn.onclick = () => {
+  currentSecondModalCabin = null;
+  cabin2Section.style.display = 'none';
+  modalContent.classList.remove('compare');
+};
+
+const compareDivider = document.getElementById('compareDivider');
+const cabinSelector = document.getElementById('cabinSelector');
+const swapCabinsBtn = document.getElementById('swapCabinsBtn');
+
+function populateCabinSelector() {
+  const cabinNames = Object.keys(DATA.cabins).sort((a, b) => parseInt(a) - parseInt(b));
+  cabinSelector.innerHTML = '<option value="">Select cabin...</option>';
+  cabinNames.forEach(name => {
+    if (name !== currentModalCabin && name !== currentSecondModalCabin) {
+      const option = document.createElement('option');
+      option.value = name;
+      option.textContent = `Cabin #${DATA.cabins[name].title || name}`;
+      cabinSelector.appendChild(option);
+    }
+  });
+}
+
+cabinSelector.addEventListener('change', (e) => {
+  if (e.target.value) {
+    openSecondCabin(DATA.cabins[e.target.value]);
+    populateCabinSelector();
+  }
+});
+
+swapCabinsBtn.onclick = () => {
+  const temp = currentModalCabin;
+  currentModalCabin = currentSecondModalCabin;
+  currentSecondModalCabin = temp;
+
+  const cabin1 = DATA.cabins[currentModalCabin];
+  const cabin2 = DATA.cabins[currentSecondModalCabin];
+
+  populateModalSection(cabin1, false);
+  populateModalSection(cabin2, true);
+  populateCabinSelector();
+};
+
+compareBtn.onclick = () => {
+  const cabin1Head = document.getElementById('cabin1Head');
+  if (currentSecondModalCabin) {
+    currentSecondModalCabin = null;
+    cabin2Section.style.display = 'none';
+    modalContent.classList.remove('compare');
+    compareDivider.style.display = 'none';
+    cabin1Head.style.display = 'none';
+  } else {
+    populateCabinSelector();
+    compareDivider.style.display = 'block';
+    modalContent.classList.add('compare');
+    cabin2Section.style.display = 'block';
+    cabin1Head.style.display = 'flex';
+    if (!currentSecondModalCabin) {
+      const cabinNames = Object.keys(DATA.cabins).sort((a, b) => parseInt(a) - parseInt(b));
+      const firstAvailable = cabinNames.find(n => n !== currentModalCabin);
+      if (firstAvailable) {
+        openSecondCabin(DATA.cabins[firstAvailable]);
+        populateCabinSelector();
+      }
+    }
+  }
+};
+
+overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+
+// lightbox
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbCount = document.getElementById('lbCount');
+let lbIndex = 0;
+
+function openLightbox(i) {
+  lbIndex = i;
+  showLightbox();
+  lightbox.classList.add('open');
+}
+function showLightbox() {
+  lbImg.src = currentImages[lbIndex];
+  lbCount.textContent = `${lbIndex + 1} / ${currentImages.length}`;
+}
+document.getElementById('lbClose').onclick = () => lightbox.classList.remove('open');
+document.getElementById('lbPrev').onclick = () => { lbIndex = (lbIndex - 1 + currentImages.length) % currentImages.length; showLightbox(); };
+document.getElementById('lbNext').onclick = () => { lbIndex = (lbIndex + 1) % currentImages.length; showLightbox(); };
+lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('open'); });
+
+document.addEventListener('keydown', e => {
+  if (lightbox.classList.contains('open')) {
+    if (e.key === 'Escape') lightbox.classList.remove('open');
+    if (e.key === 'ArrowLeft') document.getElementById('lbPrev').click();
+    if (e.key === 'ArrowRight') document.getElementById('lbNext').click();
+  } else if (overlay.classList.contains('open') && e.key === 'Escape') {
+    overlay.classList.remove('open');
+  }
+});
+
+if (mapImg.complete && mapImg.naturalWidth) mapImg.dispatchEvent(new Event('load'));
+window.addEventListener('resize', () => { /* keep current zoom; user can hit Fit */ });
+</script>
+</body>
+</html>
